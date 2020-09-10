@@ -4,6 +4,12 @@
 using Markdown
 using InteractiveUtils
 
+# ╔═╡ 0162aa9a-f363-11ea-192a-8350869f18df
+md"""
+Retrouver ce notebook à l'adresse suivante : <https://github.com/vlc1/ene-4102c-td/blob/master/td1-part2.jl>.
+
+"""
+
 # ╔═╡ d3f9af78-f35e-11ea-0812-1b1069364fba
 md"""
 # Exercice 1
@@ -29,5 +35,6 @@ $$\lim_{x \to 0} \frac{\sinh \left ( x \right )}{\sin \left ( x \right )}$$
 """
 
 # ╔═╡ Cell order:
+# ╟─0162aa9a-f363-11ea-192a-8350869f18df
 # ╟─d3f9af78-f35e-11ea-0812-1b1069364fba
 # ╟─07859f52-f360-11ea-0540-893a89f816ff
