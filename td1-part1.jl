@@ -21,7 +21,20 @@ Le programme "Julia 1.5.1" doit maintenant être installé sur votre ordinateur.
 
 # ╔═╡ 8e0646ee-f347-11ea-22f6-efa2515444b3
 md"""
-# Première utilisation
+# Prise en main
+
+## Console Julia
+
+Depuis la console Julia, exécutez quelques commandes, par exemple :
+```julia
+function sayhello(name = "Bonnie")
+	println("Hello, $(name)!")
+end
+sayhello()
+sayhello("Clyde")
+```
+
+## Notebook `Pluto`
 
 Pour une première prise en main de `Pluto`,
 
@@ -90,6 +103,43 @@ La page d'accueil de `Pluto` devrait maintenant s'ouvrir dans votre navigateur.
 Il s'agit maintenant d'ouvrir d'un notebook (par exemple, celui dont ce document est un rendu HTML, et qui se trouve à l'adresse <https://github.com/vlc1/ene-4102c-td/blob/master/td-1.jl>). Il vous suffit simplement de copier-coller cette adresse dans le champs *Open from file* et de cliquer sur *Open* !
 """
 
+# ╔═╡ ea7dc5d4-f34a-11ea-068d-43e18a1f8d4d
+md"""
+# Configuration et utilisation de `Plots`
+
+## Étape 1 : installation de la bibliothèque
+
+L'étape suivante est l'installation de la bibliothèque [`Plots`](https://github.com/fonsp/Plots.jl). Comme pour la bibliothèque précédente, depuis le mode `Pkg`, exécuter la commande suivante :
+```julia
+(@v1.5) pkg> add Plots
+```
+
+## Étape 2 : premiers graphiques
+
+Créer quelques cellules pour visualiser la fonction (ou toute fonction de votre choix)
+
+$$x \mapsto \exp \left ( x \right ).$$
+
+Les deux commandes suivantes devront être exécutées.
+```julia
+using Plots
+plot(exp)
+```
+
+Profitez-en pour utiliser les arguments mot-clé vus en cours (`xlims`, `ylims`, `lw`...) voir la page suivante pour davantage d'exemple : <https://docs.juliaplots.org/latest/attributes/>.
+
+Enfin, explorez la possibilité de tracer plusieurs graphes sur une même figure, soit
+```julia
+plot([exp, log])
+```
+ou encore
+```julia
+fig = plot(exp)
+plot!(fig, log)
+```
+
+"""
+
 # ╔═╡ Cell order:
 # ╟─9df1a0de-f33e-11ea-276a-5175cf87a652
 # ╟─8e0646ee-f347-11ea-22f6-efa2515444b3
@@ -98,3 +148,4 @@ Il s'agit maintenant d'ouvrir d'un notebook (par exemple, celui dont ce document
 # ╠═bfe43eb2-f347-11ea-257a-e5ebe3e91eb9
 # ╠═ddea46f4-f347-11ea-3714-b5212290ca66
 # ╟─0bb68dfc-f347-11ea-1d1b-37be8fcd1cff
+# ╟─ea7dc5d4-f34a-11ea-068d-43e18a1f8d4d
