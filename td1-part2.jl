@@ -28,9 +28,9 @@ md"""
 md"""
 # Exercice 2
 
-Calculer les limites suivantes.
+Calculer la limite
 
-$$\lim_{x \to 0} \frac{\sinh \left ( x \right )}{\sin \left ( x \right )}$$
+$$\lim_{x \to 0} \frac{\sinh \left ( x \right )}{\sin \left ( x \right )}.$$
 
 """
 
