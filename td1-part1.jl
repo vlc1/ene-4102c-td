@@ -80,7 +80,9 @@ La page d'accueil de `Pluto` devrait maintenant s'ouvrir dans votre navigateur.
 
 ## Étape 4 : ouverture d'un notebook
 
-Il s'agit maintenant d'ouvrir d'un notebook (par exemple, celui dont ce document est un rendu HTML, et qui se trouve à l'adresse <https://github.com/vlc1/ene-4102c-td/blob/master/td-1.jl>). Il vous suffit simplement de copier-coller cette adresse dans le champs *Open from file* et de cliquer sur *Open* !
+Il s'agit maintenant d'ouvrir d'un notebook (par exemple, celui dont ce document est un
+rendu HTML, et qui se trouve à l'adresse
+<https://github.com/vlc1/ene-4102c-td/blob/master/td1-part1.jl>). Il vous suffit simplement de copier-coller cette adresse dans le champs *Open from file* et de cliquer sur *Open* !
 
 ## Étape 5 : prise en main
 
