@@ -8,7 +8,7 @@ using InteractiveUtils
 md"""
 L'objectif de ce notebook (à retrouver [ici](https://github.com/vlc1/ene-4102c-td/blob/master/td1-part1.jl)) est l'installation et la prise en main de
 
-1. Julia et sa consolve,
+1. Julia et sa console,
 1. les notebooks réactifs de `Pluto`,
 1. le tracé de courbes avec la bibliothèque `Plots`.
 
