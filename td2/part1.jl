@@ -9,7 +9,27 @@ using Zygote, Plots
 
 # ╔═╡ 4ae18622-f7ec-11ea-2f71-d5b166ff50fb
 md"""
-# Recherche d'un zéro d'une fonction
+# Recherche de la racine d'une fonction
+
+Nous avons vu lors de la séance 2 que les éléments ``y_1 \simeq y \left ( t_1 \right )``, ``y_2 \simeq y \left ( t_2 \right )``... de la solution numérique du problème de Cauchy
+```math
+\left \{ \begin{aligned}
+\dot{y} \left ( t \right ) & = f \left [ t, y \left ( t \right ) \right ], \\
+y \left ( 0 \right ) & = y_0
+\end{aligned} \right .
+```
+par les méthodes à pas unique sont définis implicitement, c'est à dire comme racine de fonctions.
+
+Dans le cas du schéma implicite d'Euler, par exemple, l'élément ``y_{n + 1}`` (``n = 0, \ldots N - 1``) est la racine de l'équation
+```math
+F_n \left ( x \right ) = 0
+```
+où (``\tau`` dénote le pas de temps)
+```math
+F_n \colon x \mapsto x - y_n - \tau f \left ( t_{n + 1}, x \right ).
+```
+
+L'objectif de cette première partie est de présenter comment résoudre cette équation numériquement dans le cas scalaire (``\forall n = 1, \ldots N``, ``y_n \in \mathbb{K}`` où ``\mathbb{K} = \mathbb{R}, \mathbb{C}``...).
 
 ## Différentiation algorithmique
 
@@ -150,8 +170,8 @@ end
 
 # ╔═╡ Cell order:
 # ╠═24926e0a-f7ec-11ea-0be8-c90fc7e13813
-# ╠═4ae18622-f7ec-11ea-2f71-d5b166ff50fb
-# ╠═63796c5e-f7ec-11ea-2ce7-11ff767d897f
+# ╟─4ae18622-f7ec-11ea-2f71-d5b166ff50fb
+# ╟─63796c5e-f7ec-11ea-2ce7-11ff767d897f
 # ╠═b847075e-f7f2-11ea-2995-090a48903ddc
 # ╠═2b44a7a2-f7ee-11ea-3599-c7ac149c74ea
 # ╠═37e809a4-f7ee-11ea-1cbe-2b6b97b9fb28
