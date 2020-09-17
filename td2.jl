@@ -7,6 +7,12 @@ using InteractiveUtils
 # ╔═╡ 24926e0a-f7ec-11ea-0be8-c90fc7e13813
 using Zygote, Plots
 
+# ╔═╡ d61e1ea6-f924-11ea-00dc-794c93177d22
+md"""
+Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td2.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td2.ipynb) de ce notebook.
+
+"""
+
 # ╔═╡ 4ae18622-f7ec-11ea-2f71-d5b166ff50fb
 md"""
 # Recherche de la racine d'une fonction
@@ -173,7 +179,7 @@ y_{n + 1} - y_n - \tau \frac{f \left ( t_n, y_n \right ) + f \left ( t_{n + 1}, 
 y_{n + 1} - y_n - \tau f \left ( \frac{t_n + t_{n + 1}}{2}, \frac{y_n + y_{n + 1}}{2} \right ) = 0 \quad \text{(Méthode du point milieu)}.
 ```
 
-**Question** -- En suivant l'exemple suivant (`explicit`), implémenter les fonctions `implicit`, `trapezoidal` et `midpoint` dont la racine est ``y_{n + 1}``. On préservera l'ordre des paramètres, au nombre de `3`, à savoir
+**Question** -- En suivant l'exemple suivant (`explicit`), implémenter les fonctions `implicit`, `trapezoidal` et `midpoint` dont la racine est ``y_{n + 1}``. On préservera l'ordre des paramètres, au nombre de 3, à savoir
 
 * `y` -- la solution précédente, ``y _ n`` ;
 * `τ` -- le pas de temps, ``\tau`` ;
@@ -186,14 +192,14 @@ explicit(f, x, y, τ, t) = x - y - τ * f(t, y)
 
 # ╔═╡ 605783fa-f8bc-11ea-293a-77b05130e32c
 md"""
-Il existe bien sûr un grand nombre de schémas à pas unique, ceux de Runge-Kutta étant parmi les plus connus, notamment le schéma explicite d'ordre ``2``
+Il existe bien sûr un grand nombre de schémas à pas unique, ceux de Runge-Kutta étant parmi les plus connus, notamment le schéma explicite d'ordre 2
 ```math
 \begin{aligned}
 y _ * & = y _ n + \frac{\tau}{2} f \left ( t_n, y_n \right ), \\
 y _ {n + 1} & = y _ n + \tau f \left ( t_n + \frac{\tau}{2}, y _ * \right )
 \end{aligned}
 ```
-et celui d'ordre ``4``
+et celui d'ordre 4
 ```math
 \begin{aligned}
 k _ 1 & = \tau f \left ( t _ n, y _ n \right ), \\
@@ -221,7 +227,7 @@ end
 md"""
 # Intégration temporelle
 
-Il reste à présent à assembler les différentes briques, à savoir les modèles et les schémas implémentés. Pour ce faire, on définit un nouveau **composite type**, que l'on nommera `Problem` (la première lettre du nom des types est, par convention, en capitale).
+Il reste à présent à assembler les différentes briques, à savoir les modèles et les schémas implémentés. Pour ce faire, on définit un nouveau **composite type**, que l'on nommera `Problem` (la première lettre du nom des types est, par convention, en majuscule).
 
 """
 
@@ -362,6 +368,7 @@ Les paramètres suivants enfin caractérisent les interactions entre les deux es
 """
 
 # ╔═╡ Cell order:
+# ╟─d61e1ea6-f924-11ea-00dc-794c93177d22
 # ╠═24926e0a-f7ec-11ea-0be8-c90fc7e13813
 # ╟─4ae18622-f7ec-11ea-2f71-d5b166ff50fb
 # ╠═24bed800-f858-11ea-095b-45829493711d

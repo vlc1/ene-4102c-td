@@ -38,7 +38,7 @@ $$\lim_{x \to 0} \frac{\sinh \left ( x \right )}{\sin \left ( x \right )}.$$
 md"""
 # Exercice 3
 
-1. Adapter l'exemple du développement limité de la fonction exponentielle (vu en cours, voir le [notebook précédent](http://vlc1.github.io/ene-4102c/td1-part1.html)) aux fonctions `cosh` et `sinh`.
+1. Adapter l'exemple du développement limité de la fonction exponentielle aux fonctions `cosh` et `sinh`.
 1. Utiliser la bibliothèque pour visualiser ces développements limités (sur le même graphe).
 
 """
