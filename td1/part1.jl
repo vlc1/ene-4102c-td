@@ -6,7 +6,7 @@ using InteractiveUtils
 
 # ╔═╡ 526aa97a-f365-11ea-184e-81499b2a3ad2
 md"""
-L'objectif de ce notebook (à retrouver [ici](https://github.com/vlc1/ene-4102c-td/blob/master/td1-part1.jl)) est l'installation et la prise en main de
+L'objectif de ce notebook (versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td1/part1.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td1/part1.ipynb)) est l'installation et la prise en main de
 
 1. Julia et sa console,
 1. les notebooks réactifs de `Pluto`,
@@ -82,7 +82,7 @@ La page d'accueil de `Pluto` devrait maintenant s'ouvrir dans votre navigateur.
 
 Il s'agit maintenant d'ouvrir d'un notebook (par exemple, celui dont ce document est un
 rendu HTML, et qui se trouve à l'adresse
-<https://github.com/vlc1/ene-4102c-td/blob/master/td1-part1.jl>). Il vous suffit simplement de copier-coller cette adresse dans le champs *Open from file* et de cliquer sur *Open* !
+<https://github.com/vlc1/ene-4102c-td/blob/master/td1/part1.jl>). Il vous suffit simplement de copier-coller cette adresse dans le champs *Open from file* et de cliquer sur *Open* !
 
 ## Étape 5 : prise en main
 

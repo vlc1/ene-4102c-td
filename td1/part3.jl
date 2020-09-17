@@ -6,7 +6,7 @@ using InteractiveUtils
 
 # ╔═╡ c0db5a3e-f39c-11ea-12fa-3b2f78b7b2b7
 md"""
-Ce notebook est à retrouver [ici](https://github.com/vlc1/ene-4102c-td/blob/master/td1-part3.jl).
+Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td1/part3.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td1/part3.ipynb) de ce notebook.
 
 """
 
