@@ -150,10 +150,10 @@ Ces deux fonctions sont implémentées dans les cellules suivantes.
 """
 
 # ╔═╡ 58162516-f7ec-11ea-3095-85bde6d71604
-model(t, q, λ = -1) = λ * q
+linear(t, q, λ = -1) = λ * q
 
 # ╔═╡ 3ab81476-f7f8-11ea-3633-09930c9cdffe
-solution(t, λ = -1) = exp(λ * t)
+solution(t, λ = -1, y₀ = 1.) = exp(λ * t) * y₀
 
 # ╔═╡ 8a4674da-f7ec-11ea-2faf-4b332a41d7fc
 md"""
@@ -243,6 +243,8 @@ end
 md"""
 # Intégration temporelle
 
+Il reste à présent à assembler les différentes briques, à savoir les modèles et les schémas implémentés. Pour ce faire, on définit un nouveau **composite type**, que l'on nommera `Problem` (la première lettre du nom des types est, par convention, en capitale).
+
 """
 
 # ╔═╡ 2cd31668-f7ed-11ea-1b9b-d5c6ae89db19
@@ -251,8 +253,32 @@ struct Problem{F, G}
     model::G
 end
 
+# ╔═╡ aec5fd4a-f8bf-11ea-1cb2-77441c10648f
+md"""
+On souhaite enfin que les instances de ce nouveau type puissent être appelées comme une fonction de plusieurs arguments. Ces instances seront ensuite passées comme premier argument à la fonction `newton`. On dira que la cellule suivante rend les objets de type `Problem` **callable**.
+
+"""
+
 # ╔═╡ 2f44266c-f7ed-11ea-0add-37905cfaf54c
 (this::Problem)(var...) = this.scheme(this.model, var...)
+
+# ╔═╡ d7b451b4-f8bf-11ea-07ac-2df552a0d944
+md"""
+Il ne reste plus qu'à implémenter la bouche d'intégration temporelle. Étant donnés
+
+* Une condition et un instant initiaux, `y` et `t`,
+* Un pas de temps et un nombre d'itérations, `τ` et `n`,
+
+la fonction `integrate` retourne un `Tuple` de deux vecteurs, le premier contenant les instants
+```math
+t_0 \quad t_1 \quad \cdots \quad t_N
+```
+et le second la solution numérique, à savoir
+```math
+y_0 \quad y_1 \quad \cdots \quad y_N.
+```
+
+"""
 
 # ╔═╡ c5638ff8-f7ec-11ea-270f-cd22f82a2a23
 function integrate(problem, y, t, τ, n)
@@ -274,10 +300,12 @@ end
 md"""
 # Premier exemple
 
+Les cellules suivantes illustrent la résolution du problème linéaire par la méthode explicit d'Euler.
+
 """
 
 # ╔═╡ 19b1b2e2-f7ed-11ea-2e66-c7391d4f7443
-problem = Problem(implicit, model)
+problem = Problem(implicit, linear)
 
 # ╔═╡ 48205f2a-f7ed-11ea-1574-f1ed0b1d7034
 y, t = 1.0, 0.
@@ -288,13 +316,39 @@ y, t = 1.0, 0.
 # ╔═╡ 6f6dac7c-f7f5-11ea-3726-45c4888b6d8a
 T, Y = integrate(problem, y, t, τ, n)
 
+# ╔═╡ f08317e2-f8c0-11ea-11d8-7d486eb7e057
+md"""
+La solution numérique peut être visualisée et comparée à la solution exacte grâce aux commandes suivantes.
+
+"""
+
 # ╔═╡ ba191574-f7f5-11ea-29a5-639e8c561661
 begin
-	a, b = T[begin], T[end]
+	a, b = first(T), last(T)
 	c, d = minimum(Y), maximum(Y)
 	fig = scatter(T, Y, xlims = (a, b), ylims = (1.1c - 0.1d, -0.1c + 1.1d))
 	plot!(fig, a:(b - a) / 100:b, solution)
 end
+
+# ╔═╡ 107eb128-f8c1-11ea-0ffc-c3d57849b589
+md"""
+**Question** -- Augmenter progressivement le pas de temps d'intégration de `Problem(explicit, linear)`. Que remarque t'on ?
+
+**Question** -- Tester différents schémas avec différents pas de temps. Qu'observe t'on ?
+
+**Question** -- Calculer l'erreur à un temps donné (par exemple, ``T = 1``) en fonction du pas en temps pour chacun des schémas implémentés. Visualiser ces données sur un graphique en échelle logarithmique.
+
+"""
+
+# ╔═╡ d4637d80-f8c1-11ea-1f7f-df462373ca2d
+md"""
+# Au delà du linéaire
+
+Tout l'intérêt de la méthode de Newton est qu'on peut bien sûr s'affranchir de la linéarité du modèle (même si, pour rester simple, ce notebook se limite au cas scalaire).
+
+**Question** -- Utiliser ou imaginer un modèle non-linéaire et en visualiser la solution.
+
+"""
 
 # ╔═╡ 91a712b2-f8bd-11ea-3b8c-1bfbd521d29a
 nonlinear(t, y, λ = -1) = λ * y ^ 2 / (1 + t)
@@ -312,7 +366,7 @@ nonlinear(t, y, λ = -1) = λ * y ^ 2 / (1 + t)
 # ╟─7dc345ee-f7ec-11ea-138f-a1c6b81e0260
 # ╠═58162516-f7ec-11ea-3095-85bde6d71604
 # ╠═3ab81476-f7f8-11ea-3633-09930c9cdffe
-# ╠═8a4674da-f7ec-11ea-2faf-4b332a41d7fc
+# ╟─8a4674da-f7ec-11ea-2faf-4b332a41d7fc
 # ╠═a71a5b6c-f7ec-11ea-3881-cd909df3a068
 # ╠═aad46496-f7ec-11ea-3d35-5bf3365ec5e3
 # ╠═ad6a1be2-f7ec-11ea-376b-3d1b8ad005c0
@@ -322,12 +376,17 @@ nonlinear(t, y, λ = -1) = λ * y ^ 2 / (1 + t)
 # ╠═bdcbf0be-f7ec-11ea-3d8e-93cf936c03ff
 # ╟─c87b46c0-f7ec-11ea-2918-d306ffd1c2bd
 # ╠═2cd31668-f7ed-11ea-1b9b-d5c6ae89db19
+# ╟─aec5fd4a-f8bf-11ea-1cb2-77441c10648f
 # ╠═2f44266c-f7ed-11ea-0add-37905cfaf54c
+# ╟─d7b451b4-f8bf-11ea-07ac-2df552a0d944
 # ╠═c5638ff8-f7ec-11ea-270f-cd22f82a2a23
 # ╟─11baa86e-f7ed-11ea-3439-519c8a8fc61e
 # ╠═19b1b2e2-f7ed-11ea-2e66-c7391d4f7443
 # ╠═48205f2a-f7ed-11ea-1574-f1ed0b1d7034
 # ╠═78044ff6-f7f7-11ea-1501-a354bed24082
 # ╠═6f6dac7c-f7f5-11ea-3726-45c4888b6d8a
+# ╟─f08317e2-f8c0-11ea-11d8-7d486eb7e057
 # ╠═ba191574-f7f5-11ea-29a5-639e8c561661
+# ╟─107eb128-f8c1-11ea-0ffc-c3d57849b589
+# ╟─d4637d80-f8c1-11ea-1f7f-df462373ca2d
 # ╠═91a712b2-f8bd-11ea-3b8c-1bfbd521d29a
