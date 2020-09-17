@@ -175,26 +175,14 @@ y_{n + 1} - y_n - \tau f \left ( \frac{t_n + t_{n + 1}}{2}, \frac{y_n + y_{n + 1
 
 **Question** -- En suivant l'exemple suivant (`explicit`), implémenter les fonctions `implicit`, `trapezoidal` et `midpoint` dont la racine est ``y_{n + 1}``. On préservera l'ordre des paramètres, au nombre de `3`, à savoir
 
-* `y` -- la solution précédente, ``y _ n``,
-* `τ` -- le pas de temps, ``\tau``,
+* `y` -- la solution précédente, ``y _ n`` ;
+* `τ` -- le pas de temps, ``\tau`` ;
 * `t` -- l'instant précédent, ``t _ n``.
 
 """
 
 # ╔═╡ a71a5b6c-f7ec-11ea-3881-cd909df3a068
 explicit(f, x, y, τ, t) = x - y - τ * f(t, y)
-
-# ╔═╡ aad46496-f7ec-11ea-3d35-5bf3365ec5e3
-###
-implicit(f, x, y, τ, t) = x - y - τ * f(t + τ, x)
-
-# ╔═╡ ad6a1be2-f7ec-11ea-376b-3d1b8ad005c0
-###
-midpoint(f, x, y, τ, t) = x - y - τ * f(t + τ / 2, (x + y) / 2)
-
-# ╔═╡ b417acac-f7ec-11ea-00cc-a1921aa7b239
-###
-trapezoidal(f, x, y, τ, t) = x - y - τ * (f(t, y) + f(t + τ, x)) / 2
 
 # ╔═╡ 605783fa-f8bc-11ea-293a-77b05130e32c
 md"""
@@ -227,16 +215,6 @@ y _ {n + 1} = y _ n + \frac{k _ 1 + 2 k _ 2 + 2 k _ 3 + k _ 4}{6}.
 function rk2(f, x, y, τ, t)
     z = y + τ * f(t, y) / 2
     x - y - τ * f(t + τ / 2, z)
-end
-
-# ╔═╡ bdcbf0be-f7ec-11ea-3d8e-93cf936c03ff
-###
-function rk4(f, x, y, τ, t)
-    k₁ = τ * f(t, y)
-    k₂ = τ * f(t + τ / 2, y + k₁ / 2)
-    k₃ = τ * f(t + τ / 2, y + k₂ / 2)
-    k₄ = τ * f(t + τ, y + k₃)
-    x - y - (k₁ + 2k₂ + 2k₃ + k₄) / 6
 end
 
 # ╔═╡ c87b46c0-f7ec-11ea-2918-d306ffd1c2bd
@@ -305,7 +283,7 @@ Les cellules suivantes illustrent la résolution du problème linéaire par la m
 """
 
 # ╔═╡ 19b1b2e2-f7ed-11ea-2e66-c7391d4f7443
-problem = Problem(implicit, linear)
+problem = Problem(explicit, linear)
 
 # ╔═╡ 48205f2a-f7ed-11ea-1574-f1ed0b1d7034
 y, t = 1.0, 0.
@@ -342,7 +320,7 @@ md"""
 
 # ╔═╡ d4637d80-f8c1-11ea-1f7f-df462373ca2d
 md"""
-# Au delà du linéaire
+# Au delà du cas linéaire
 
 Tout l'intérêt de la méthode de Newton est qu'on peut bien sûr s'affranchir de la linéarité du modèle (même si, pour rester simple, ce notebook se limite au cas scalaire).
 
@@ -352,6 +330,36 @@ Tout l'intérêt de la méthode de Newton est qu'on peut bien sûr s'affranchir 
 
 # ╔═╡ 91a712b2-f8bd-11ea-3b8c-1bfbd521d29a
 nonlinear(t, y, λ = -1) = λ * y ^ 2 / (1 + t)
+
+# ╔═╡ 46222752-f91a-11ea-372e-2dde47c81add
+md"""
+# Au delà du cas scalaire
+
+On se propose à présent d'utiliser une bibliothèque existante, `DifferentialEquations.jl`, pour résoudre l'[équation de prédation de Lotka-Volterra](https://fr.wikipedia.org/wiki/%C3%89quations_de_pr%C3%A9dation_de_Lotka-Volterra) :
+
+> En mathématiques, les équations de prédation de Lotka-Volterra, que l'on désigne aussi sous le terme de "modèle proie-prédateur", sont un couple d'équations différentielles non-linéaires du premier ordre, et sont couramment utilisées pour décrire la dynamique de systèmes biologiques dans lesquels un prédateur et sa proie interagissent. Elles ont été proposées indépendamment par Alfred James Lotka en 1925 et Vito Volterra en 1926.
+
+Le système d'équations s'écrit :
+```math
+\left \{ \begin{aligned}
+\dot{x} \left ( t \right ) & = x \left ( t \right ) \left [ \alpha - \beta y \left ( t \right ) \right ], \\
+\dot{y} \left ( t \right ) & = y \left ( t \right ) \left [ \delta x \left ( t \right ) - \gamma \right ]
+\end{aligned} \right .
+```
+où
+
+* ``t`` est le temps ;
+* ``x \left ( t \right )`` est l'effectif des proies à l'instant ``t`` ;
+* ``y \left ( t \right )`` est l'effectif des prédateurs à l'instant ``t``.
+
+Les paramètres suivants enfin caractérisent les interactions entre les deux espèces :
+```math
+\alpha = 0.1, \quad \beta = 0.003, \quad \gamma = 0.06, \quad \delta = 0.0012.
+```
+
+**Question** -- Résoudre l'équation de Lotka-Volterra avec la bibliothèque `DifferenialEquations.jl` et de sa [documentation](https://diffeq.sciml.ai/stable/tutorials/ode_example/).
+
+"""
 
 # ╔═╡ Cell order:
 # ╠═24926e0a-f7ec-11ea-0be8-c90fc7e13813
@@ -368,12 +376,8 @@ nonlinear(t, y, λ = -1) = λ * y ^ 2 / (1 + t)
 # ╠═3ab81476-f7f8-11ea-3633-09930c9cdffe
 # ╟─8a4674da-f7ec-11ea-2faf-4b332a41d7fc
 # ╠═a71a5b6c-f7ec-11ea-3881-cd909df3a068
-# ╠═aad46496-f7ec-11ea-3d35-5bf3365ec5e3
-# ╠═ad6a1be2-f7ec-11ea-376b-3d1b8ad005c0
-# ╠═b417acac-f7ec-11ea-00cc-a1921aa7b239
 # ╟─605783fa-f8bc-11ea-293a-77b05130e32c
 # ╠═b5f58c6a-f7ec-11ea-34eb-7beed843a51c
-# ╠═bdcbf0be-f7ec-11ea-3d8e-93cf936c03ff
 # ╟─c87b46c0-f7ec-11ea-2918-d306ffd1c2bd
 # ╠═2cd31668-f7ed-11ea-1b9b-d5c6ae89db19
 # ╟─aec5fd4a-f8bf-11ea-1cb2-77441c10648f
@@ -390,3 +394,4 @@ nonlinear(t, y, λ = -1) = λ * y ^ 2 / (1 + t)
 # ╟─107eb128-f8c1-11ea-0ffc-c3d57849b589
 # ╟─d4637d80-f8c1-11ea-1f7f-df462373ca2d
 # ╠═91a712b2-f8bd-11ea-3b8c-1bfbd521d29a
+# ╟─46222752-f91a-11ea-372e-2dde47c81add
