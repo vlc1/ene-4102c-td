@@ -156,10 +156,10 @@ Ces deux fonctions sont implémentées dans les cellules suivantes.
 """
 
 # ╔═╡ 58162516-f7ec-11ea-3095-85bde6d71604
-linear(t, q, λ = -1) = λ * q
+linear(t, y, λ = -1) = λ * y
 
 # ╔═╡ 3ab81476-f7f8-11ea-3633-09930c9cdffe
-solution(t, λ = -1, y₀ = 1.) = exp(λ * t) * y₀
+solution(t, λ = -1, y₀ = 1., t₀ = 0.) = exp(λ * (t - t₀)) * y₀
 
 # ╔═╡ 8a4674da-f7ec-11ea-2faf-4b332a41d7fc
 md"""
@@ -189,6 +189,15 @@ y_{n + 1} - y_n - \tau f \left ( \frac{t_n + t_{n + 1}}{2}, \frac{y_n + y_{n + 1
 
 # ╔═╡ a71a5b6c-f7ec-11ea-3881-cd909df3a068
 explicit(f, x, y, τ, t) = x - y - τ * f(t, y)
+
+# ╔═╡ 0b0ec174-f9bb-11ea-2165-b156550d1c7e
+implicit(f, x, y, τ, t) = x - y - τ * f(t + τ, x)
+
+# ╔═╡ 17a3d276-f9bb-11ea-179a-75e3d70c266a
+trapezoidal(f, x, y, τ, t) = x - y - τ * (f(t, y) + f(t + τ, y)) / 2
+
+# ╔═╡ 2f1b501e-f9bb-11ea-1e93-43ad4f994902
+midpoint(f, x, y, τ, t) = x - y - τ * f(t + τ / 2, (x + y) / 2)
 
 # ╔═╡ 605783fa-f8bc-11ea-293a-77b05130e32c
 md"""
@@ -221,6 +230,15 @@ y _ {n + 1} = y _ n + \frac{k _ 1 + 2 k _ 2 + 2 k _ 3 + k _ 4}{6}.
 function rk2(f, x, y, τ, t)
     z = y + τ * f(t, y) / 2
     x - y - τ * f(t + τ / 2, z)
+end
+
+# ╔═╡ a78344e4-f9ac-11ea-34f0-8fe50a08cb15
+function rk4(f, x, y, τ, t)
+	k₁ = τ * f(t, y)
+	k₂ = τ * f(t + τ / 2, y + k₁ / 2)
+	k₃ = τ * f(t + τ / 2, y + k₂ / 2)
+	k₄ = τ * f(t + τ, y + k₃)
+	x - y - (k₁ + 2k₂ + 2k₃ + k₄) / 6
 end
 
 # ╔═╡ c87b46c0-f7ec-11ea-2918-d306ffd1c2bd
@@ -265,11 +283,11 @@ y_0 \quad y_1 \quad \cdots \quad y_N.
 """
 
 # ╔═╡ c5638ff8-f7ec-11ea-270f-cd22f82a2a23
-function integrate(problem, y, t, τ, n)
+function integrate(problem, y, t, τ, s)
     T = [t]
     Y = [y]
 
-    for i in 1:n
+    while t < (1 - √eps(t)) * s
         y, _ = newton(problem, y, y, τ, t)
         t += τ
         
@@ -295,10 +313,10 @@ problem = Problem(explicit, linear)
 y, t = 1.0, 0.
 
 # ╔═╡ 78044ff6-f7f7-11ea-1501-a354bed24082
-τ, n = 0.1, 10
+τ, s = 0.25, 1.
 
 # ╔═╡ 6f6dac7c-f7f5-11ea-3726-45c4888b6d8a
-T, Y = integrate(problem, y, t, τ, n)
+T, Y = integrate(problem, y, t, τ, s)
 
 # ╔═╡ f08317e2-f8c0-11ea-11d8-7d486eb7e057
 md"""
@@ -383,8 +401,12 @@ Les paramètres suivants enfin caractérisent les interactions entre les deux es
 # ╠═3ab81476-f7f8-11ea-3633-09930c9cdffe
 # ╟─8a4674da-f7ec-11ea-2faf-4b332a41d7fc
 # ╠═a71a5b6c-f7ec-11ea-3881-cd909df3a068
+# ╠═0b0ec174-f9bb-11ea-2165-b156550d1c7e
+# ╠═17a3d276-f9bb-11ea-179a-75e3d70c266a
+# ╠═2f1b501e-f9bb-11ea-1e93-43ad4f994902
 # ╟─605783fa-f8bc-11ea-293a-77b05130e32c
 # ╠═b5f58c6a-f7ec-11ea-34eb-7beed843a51c
+# ╠═a78344e4-f9ac-11ea-34f0-8fe50a08cb15
 # ╟─c87b46c0-f7ec-11ea-2918-d306ffd1c2bd
 # ╠═2cd31668-f7ed-11ea-1b9b-d5c6ae89db19
 # ╟─aec5fd4a-f8bf-11ea-1cb2-77441c10648f
