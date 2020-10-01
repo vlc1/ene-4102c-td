@@ -127,7 +127,7 @@ y \left ( 1 \right ) & = y_1.
 spacing(n) = 1 / (1 / √3 + n)
 
 # ╔═╡ a8cfd4a4-0418-11eb-3d7d-257307b0d2bd
-mesh(n) = [spacing(n) * (1 / √3 + (i - 2)) for i in 2:n + 1]
+mesh(n) = [spacing(n) * (1 / √3 + (i - 1)) for i in 1:n]
 
 # ╔═╡ 103e3098-041b-11eb-2a89-855f41985558
 md"""
@@ -209,7 +209,7 @@ fig
 
 # ╔═╡ f6aa25e8-041e-11eb-307b-7b6c8411573c
 md"""
-5. Construire un autre problème en modifiant `f`, `g₀`, `y₁` et `analytical` de telle sorte à ce que la solution ne soit plus un polynôme d'ordre 2 ou moins.
+5. Construire un autre problème en modifiant `f`, `g₀`, `y₁` et `analytical` de sorte à que la solution ne soit plus un polynôme d'ordre 2.
 6. Calculer les erreurs ``L_1``, ``L_2`` et ``L_\infty`` pour plusieurs maillages et normes. Enfin, estimer l'ordre de convergence pour chacune des normes par la méthode des moindres carrés.
 
 """
