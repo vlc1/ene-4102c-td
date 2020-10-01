@@ -4,14 +4,8 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 6f564db6-031e-11eb-10df-dfdb07cacd7d
-using DifferentialEquations
-
 # ╔═╡ 2aea5cfc-03bf-11eb-3922-7b05c68e795a
-using LinearAlgebra
-
-# ╔═╡ 9da78850-03c4-11eb-011c-975615ab606e
-using Plots
+using DifferentialEquations, LinearAlgebra, Plots, LsqFit
 
 # ╔═╡ 389f51d8-0318-11eb-1ada-19cfbeb88947
 md"""
@@ -125,34 +119,26 @@ y \left ( 1 \right ) & = y_1.
 
 ``f`` représente une source (par exemple un dépot de chaleur par laser).
 
-1. Soit ``n`` le nombre de points. Quelle valeur de ``h`` utiliser pour obtenir une discrétisation d'ordre 2 ?
-1. Discrétiser l'équation.
+1. Soit ``n`` le nombre de points. Quelle valeur de ``h`` utiliser pour obtenir une discrétisation d'ordre 2 ? Implémenter la fonction `spacing` qui retourne ``h`` en fonction de ``n``, et enfin `mesh` qui retourne un tableau contenant les abscisses de chacune des inconnues.
 
 """
 
-# ╔═╡ 70e982b8-03c0-11eb-283d-67e9be295243
-f(x) = -one(x)
+# ╔═╡ 65969a00-0419-11eb-3bd9-41931e3e837a
+spacing(n) = 1 / (1 / √3 + n)
 
-# ╔═╡ b4d14eac-03c0-11eb-31c4-331908f6e6c7
-y₁ = 0.5
+# ╔═╡ a8cfd4a4-0418-11eb-3d7d-257307b0d2bd
+mesh(n) = [spacing(n) * (1 / √3 + (i - 2)) for i in 2:n + 1]
 
-# ╔═╡ b8183b66-03c0-11eb-22f2-b1055db79a0f
-g₀ = 0.
+# ╔═╡ 103e3098-041b-11eb-2a89-855f41985558
+md"""
+2. Discrétiser l'équation, et l'implémenter à l'aide de deux fonctions, `laplacian` et `rhs`, invoquée depuis la fonction `numerical` ci-dessous.
 
-# ╔═╡ cd38ee84-03be-11eb-13f6-fb65706e7293
-n = 8
-
-# ╔═╡ d69f1fac-03be-11eb-18f3-f7a77ce68ca0
-h = 1 / (1 / √3 + n)
-
-# ╔═╡ 872d5e9c-03bf-11eb-1ca2-272d8a149d11
-H = [i == 1 ? h / √3 : h for i in 1:n + 1]
-
-# ╔═╡ d888a030-03bf-11eb-17b4-2b88fb01c7f5
-X = [sum(H[1:i-1]) for i in 2:n + 1]
+"""
 
 # ╔═╡ 2603c732-03bf-11eb-3c01-a3b6d7e04ef6
-begin
+function laplacian(n)
+	h = spacing(n)
+
 	A = Tridiagonal(zeros.((n - 1, n, n - 1))...)
 
 	A[1, 1], A[1, 2] = 6 / (3 + 2 * √3) / h ^ 2, -6 / (3 + 2 * √3) / h ^ 2
@@ -162,44 +148,92 @@ begin
 	end
 
 	A[n, n - 1], A[n, n] = -1 / h ^ 2, 2 / h ^ 2
+
+	A
 end
 
 # ╔═╡ 5d9b193a-03c0-11eb-2b91-3f838aaf7c4a
-begin
+function rhs(n, f, g₀, y₁)
+	h, X = spacing(n), mesh(n)
+
 	B = f.(X)
 	B[1] -= 6g₀ / (3 + 2 * √3) / h
 	B[n] += y₁ / h ^ 2
+
+	B
 end
 
-# ╔═╡ 6377b8b2-03bf-11eb-138d-0700381fcceb
-A \ B
+# ╔═╡ a2321e98-041d-11eb-1a10-297553e4aee7
+function numerical(n, f, g₀, y₁)
+	A, B = laplacian(n), rhs(n, f, g₀, y₁)
+	A \ B
+end
 
-# ╔═╡ bac0d47a-03c2-11eb-3531-79e6d80379be
-X .^ 2 ./ 2
+# ╔═╡ 867ddb82-041b-11eb-3e88-43190945ccab
+md"""
+3. Définir la solution analytique du problème suivant (fonction `analytical`) :
+
+"""
+
+# ╔═╡ 70e982b8-03c0-11eb-283d-67e9be295243
+begin
+	f(x) = -one(x)
+	g₀ = 0.0
+	y₁ = 0.5
+end
+
+# ╔═╡ ea42b9e4-041b-11eb-02cb-c33e4890adb5
+analytical(x) = x ^ 2 / 2
+
+# ╔═╡ 444fa398-041c-11eb-3365-8d70eed19687
+md"""
+4. Résoudre le problème pour ``n = 2``, ``4``... et visualiser les solutions numérique et analytique. Que constatez-vous ?
+
+"""
+
+# ╔═╡ fa72e35a-041d-11eb-0512-5b63e47199b5
+N = [2, 4, 8, 16]
 
 # ╔═╡ a1c7017c-03c4-11eb-1425-6b42db5f8878
+begin
+	fig = plot()
+	for n in N
+		X, Y = mesh(n), numerical(n, f, g₀, y₁)
+		scatter!(fig, X, Y)
+		plot!(fig, X, analytical.(X))
+	end
+end
 
+# ╔═╡ 45f2d4f2-041e-11eb-3714-b7a31b6578d0
+fig
+
+# ╔═╡ f6aa25e8-041e-11eb-307b-7b6c8411573c
+md"""
+5. Construire un autre problème en modifiant `f`, `g₀`, `y₁` et `analytical` de telle sorte à ce que la solution ne soit plus un polynôme d'ordre 2 ou moins.
+6. Calculer les erreurs ``L_1``, ``L_2`` et ``L_\infty`` pour plusieurs maillages et normes. Enfin, estimer l'ordre de convergence pour chacune des normes par la méthode des moindres carrés.
+
+"""
 
 # ╔═╡ Cell order:
+# ╠═2aea5cfc-03bf-11eb-3922-7b05c68e795a
 # ╟─389f51d8-0318-11eb-1ada-19cfbeb88947
-# ╠═6f564db6-031e-11eb-10df-dfdb07cacd7d
 # ╠═27071d3a-031f-11eb-337e-ef188b1ff882
 # ╠═5ba72e6c-0322-11eb-0216-05672a01f4c5
 # ╠═3426ac9e-0324-11eb-2238-5d7522a221db
 # ╠═59010f78-0324-11eb-0053-01a5b40429df
 # ╠═8351f7d8-0324-11eb-3015-d1cf06eff4be
 # ╟─e304b5b2-0324-11eb-0b67-b5b1c5a3ce36
-# ╠═2aea5cfc-03bf-11eb-3922-7b05c68e795a
-# ╠═70e982b8-03c0-11eb-283d-67e9be295243
-# ╠═b4d14eac-03c0-11eb-31c4-331908f6e6c7
-# ╠═b8183b66-03c0-11eb-22f2-b1055db79a0f
-# ╠═cd38ee84-03be-11eb-13f6-fb65706e7293
-# ╠═d69f1fac-03be-11eb-18f3-f7a77ce68ca0
-# ╠═872d5e9c-03bf-11eb-1ca2-272d8a149d11
-# ╠═d888a030-03bf-11eb-17b4-2b88fb01c7f5
+# ╠═65969a00-0419-11eb-3bd9-41931e3e837a
+# ╠═a8cfd4a4-0418-11eb-3d7d-257307b0d2bd
+# ╟─103e3098-041b-11eb-2a89-855f41985558
+# ╠═a2321e98-041d-11eb-1a10-297553e4aee7
 # ╠═2603c732-03bf-11eb-3c01-a3b6d7e04ef6
 # ╠═5d9b193a-03c0-11eb-2b91-3f838aaf7c4a
-# ╠═6377b8b2-03bf-11eb-138d-0700381fcceb
-# ╠═bac0d47a-03c2-11eb-3531-79e6d80379be
-# ╠═9da78850-03c4-11eb-011c-975615ab606e
+# ╟─867ddb82-041b-11eb-3e88-43190945ccab
+# ╠═70e982b8-03c0-11eb-283d-67e9be295243
+# ╠═ea42b9e4-041b-11eb-02cb-c33e4890adb5
+# ╟─444fa398-041c-11eb-3365-8d70eed19687
+# ╠═fa72e35a-041d-11eb-0512-5b63e47199b5
 # ╠═a1c7017c-03c4-11eb-1425-6b42db5f8878
+# ╠═45f2d4f2-041e-11eb-3714-b7a31b6578d0
+# ╟─f6aa25e8-041e-11eb-307b-7b6c8411573c
