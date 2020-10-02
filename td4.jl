@@ -7,6 +7,12 @@ using InteractiveUtils
 # ╔═╡ 2aea5cfc-03bf-11eb-3922-7b05c68e795a
 using DifferentialEquations, LinearAlgebra, Plots, LsqFit
 
+# ╔═╡ 5d7fafec-0422-11eb-1062-710a53eb59f0
+md"""
+Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td4.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td4.ipynb) de ce notebook.
+
+"""
+
 # ╔═╡ 389f51d8-0318-11eb-1ada-19cfbeb88947
 md"""
 # Résolution du problème de Blasius
@@ -82,25 +88,6 @@ y' \left ( \infty \right ) = 1.
 
 """
 
-# ╔═╡ 27071d3a-031f-11eb-337e-ef188b1ff882
-u₀ = [0., 0., 1.]
-
-# ╔═╡ 5ba72e6c-0322-11eb-0216-05672a01f4c5
-blasius!(z, y, p, x) = z .= [y[2], y[3], -y[1] * y[3]]
-
-# ╔═╡ 3426ac9e-0324-11eb-2238-5d7522a221db
-function bc!(r, y, p, x)
-	r[1] = y[begin][1]
-	r[2] = y[begin][2]
-	r[3] = y[end][2] - 1
-end
-
-# ╔═╡ 59010f78-0324-11eb-0053-01a5b40429df
-bvp = BVProblem(blasius!, bc!, [0., 0., 1.], (0., 100.))
-
-# ╔═╡ 8351f7d8-0324-11eb-3015-d1cf06eff4be
-sol = solve(bvp, Shooting(Tsit5()))
-
 # ╔═╡ e304b5b2-0324-11eb-0b67-b5b1c5a3ce36
 md"""
 # Conduction stationnaire dans une barre
@@ -124,10 +111,10 @@ y \left ( 1 \right ) & = y_1.
 """
 
 # ╔═╡ 65969a00-0419-11eb-3bd9-41931e3e837a
-spacing(n) = 1 / (1 / √3 + n)
+spacing(n) = 0.0
 
 # ╔═╡ a8cfd4a4-0418-11eb-3d7d-257307b0d2bd
-mesh(n) = [spacing(n) * (1 / √3 + (i - 1)) for i in 1:n]
+mesh(n) = zeros(n)
 
 # ╔═╡ 103e3098-041b-11eb-2a89-855f41985558
 md"""
@@ -137,31 +124,17 @@ md"""
 
 # ╔═╡ 2603c732-03bf-11eb-3c01-a3b6d7e04ef6
 function laplacian(n)
-	h = spacing(n)
-
 	A = Tridiagonal(zeros.((n - 1, n, n - 1))...)
 
-	A[1, 1], A[1, 2] = 6 / (3 + 2 * √3) / h ^ 2, -6 / (3 + 2 * √3) / h ^ 2
-
-	for i in 2:n - 1
-		A[i, i - 1], A[i, i], A[i, i + 1] = -1 / h ^ 2, 2 / h ^ 2, - 1/ h ^ 2
+	for i in 1:n
+		A[i, i] = 1.0
 	end
-
-	A[n, n - 1], A[n, n] = -1 / h ^ 2, 2 / h ^ 2
 
 	A
 end
 
 # ╔═╡ 5d9b193a-03c0-11eb-2b91-3f838aaf7c4a
-function rhs(n, f, g₀, y₁)
-	h, X = spacing(n), mesh(n)
-
-	B = f.(X)
-	B[1] -= 6g₀ / (3 + 2 * √3) / h
-	B[n] += y₁ / h ^ 2
-
-	B
-end
+rhs(n, f, g₀, y₁) = zeros(n)
 
 # ╔═╡ a2321e98-041d-11eb-1a10-297553e4aee7
 function numerical(n, f, g₀, y₁)
@@ -183,7 +156,7 @@ begin
 end
 
 # ╔═╡ ea42b9e4-041b-11eb-02cb-c33e4890adb5
-analytical(x) = x ^ 2 / 2
+analytical(x) = zero(x)
 
 # ╔═╡ 444fa398-041c-11eb-3365-8d70eed19687
 md"""
@@ -216,12 +189,8 @@ md"""
 
 # ╔═╡ Cell order:
 # ╠═2aea5cfc-03bf-11eb-3922-7b05c68e795a
+# ╟─5d7fafec-0422-11eb-1062-710a53eb59f0
 # ╟─389f51d8-0318-11eb-1ada-19cfbeb88947
-# ╠═27071d3a-031f-11eb-337e-ef188b1ff882
-# ╠═5ba72e6c-0322-11eb-0216-05672a01f4c5
-# ╠═3426ac9e-0324-11eb-2238-5d7522a221db
-# ╠═59010f78-0324-11eb-0053-01a5b40429df
-# ╠═8351f7d8-0324-11eb-3015-d1cf06eff4be
 # ╟─e304b5b2-0324-11eb-0b67-b5b1c5a3ce36
 # ╠═65969a00-0419-11eb-3bd9-41931e3e837a
 # ╠═a8cfd4a4-0418-11eb-3d7d-257307b0d2bd
