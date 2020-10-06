@@ -9,7 +9,8 @@ using DifferentialEquations, LinearAlgebra, Plots, LsqFit
 
 # ╔═╡ 5d7fafec-0422-11eb-1062-710a53eb59f0
 md"""
-Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td4.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td4.ipynb) de ce notebook.
+Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td4.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td4.ipynb) de ce notebook, et correction au format [Pluto](https://github.com/
+vlc1/ene-4102c-td/blob/solution/td4.jl).
 
 """
 
