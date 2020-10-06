@@ -44,6 +44,53 @@ $$N =
 
 """
 
+# ╔═╡ f54ffbe4-07ac-11eb-1ac9-7d4528dc1dd8
+md"""
+## Correction
+
+"""
+
+# ╔═╡ fb4c298e-07ac-11eb-2982-4d3322766983
+# Question 1
+begin
+	U = collect(0:50)
+	U, length(U)
+end
+
+# ╔═╡ 08cc94cc-07ad-11eb-38d8-3bb9b7bd0c67
+# Question 2
+begin
+	V = U[begin:begin + 4]
+	W = [U[begin:begin + 4]; U[end - 4:end]]
+	V, W
+end
+
+# ╔═╡ 12209582-07ad-11eb-2d27-ad6a96675c39
+# Question 3
+M = transpose(reshape(1:30, 10, 3))
+
+# ╔═╡ 60bc41aa-07ad-11eb-32fc-e5087f1353ae
+# Question 4
+begin
+	N = M[:, begin:begin + 1]
+	P = M[:, end - 2:end]
+	Q = M[begin:2:begin + 2, begin + 2:4:begin + 6]
+	N, P, Q
+end
+
+# ╔═╡ e9822b76-07ad-11eb-1f95-b5e39f3a7615
+# Question 5
+R = M[:, begin:2:end]
+
+# ╔═╡ 1c1e59ec-07ae-11eb-009f-4d280ccbf6dd
+# Question 6
+begin
+	A = collect(-1:-2:-99)
+	B = collect(2:2:100)
+	C = collect(Iterators.flatten(zip(A, B)))
+	A, B, C
+end
+
 # ╔═╡ ca8cb49a-f39c-11ea-307e-97825e864b0f
 md"""
 # Exercice 2 -- Matrices et systèmes linéaires
@@ -78,6 +125,13 @@ x + 2y + 3z + 4t & = 1, \\
 # ╔═╡ Cell order:
 # ╟─c0db5a3e-f39c-11ea-12fa-3b2f78b7b2b7
 # ╟─03cb7526-f392-11ea-123a-797739ba60de
+# ╟─f54ffbe4-07ac-11eb-1ac9-7d4528dc1dd8
+# ╠═fb4c298e-07ac-11eb-2982-4d3322766983
+# ╠═08cc94cc-07ad-11eb-38d8-3bb9b7bd0c67
+# ╠═12209582-07ad-11eb-2d27-ad6a96675c39
+# ╠═60bc41aa-07ad-11eb-32fc-e5087f1353ae
+# ╠═e9822b76-07ad-11eb-1f95-b5e39f3a7615
+# ╠═1c1e59ec-07ae-11eb-009f-4d280ccbf6dd
 # ╟─ca8cb49a-f39c-11ea-307e-97825e864b0f
 # ╟─46497466-f39e-11ea-2634-cd5985460790
 # ╟─7fb06e78-f39f-11ea-38d9-ab51b94af7c5
