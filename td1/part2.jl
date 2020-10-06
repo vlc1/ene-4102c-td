@@ -14,13 +14,13 @@ Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td1/part2.jl) 
 md"""
 # Exercice 1
 
-Établir pour chacune des fonctions proposées ci-dessous un développement limité en $0$ à l'ordre $n$.
+Établir pour chacune des fonctions proposées ci-dessous un développement limité en ``0`` à l'ordre ``n``.
 
 | $f$ | $n$ |
 |:--------:|:-----:|
-| $$x \mapsto \frac{\ln \left ( 1 + x \right )}{1 + x}$$ | $3$ |
-| $$x \mapsto \frac{\ln \left [ \cosh \left ( x \right ) \right ]}{x \ln \left ( 1 + x \right )}$$ | $2$ |
-| $$x \mapsto \frac{\cos \left ( x \right ) - 1}{\ln \left ( 1 + x \right ) \sinh \left ( x \right )}$$ | $3$ |
+| ``x \mapsto \frac{\ln \left ( 1 + x \right )}{1 + x}`` | ``3`` |
+| ``x \mapsto \frac{\ln \left [ \cosh \left ( x \right ) \right ]}{x \ln \left ( 1 + x \right )}`` | ``2`` |
+| ``x \mapsto \frac{\cos \left ( x \right ) - 1}{\ln \left ( 1 + x \right ) \sinh \left ( x \right )}`` | ``3`` |
 
 """
 
@@ -28,9 +28,10 @@ md"""
 md"""
 # Exercice 2
 
-Calculer la limite
-
-$$\lim_{x \to 0} \frac{\sinh \left ( x \right )}{\sin \left ( x \right )}.$$
+Déterminer la limite
+```math
+\lim_{x \to 0} \frac{\sinh \left ( x \right )}{\sin \left ( x \right )}.
+```
 
 """
 
@@ -38,8 +39,8 @@ $$\lim_{x \to 0} \frac{\sinh \left ( x \right )}{\sin \left ( x \right )}.$$
 md"""
 # Exercice 3
 
-1. Adapter l'exemple du développement limité de la fonction exponentielle aux fonctions `cosh` et `sinh`.
-1. Utiliser la bibliothèque pour visualiser ces développements limités (sur le même graphe).
+1. Adapter l'exemple du développement limité de la fonction exponentielle aux fonctions ``\cosh`` et ``\sinh``.
+1. Utiliser la bibliothèque `Plots.jl` pour visualiser ces développements limités.
 
 """
 
