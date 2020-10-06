@@ -4,6 +4,9 @@
 using Markdown
 using InteractiveUtils
 
+# ╔═╡ 11645006-07b1-11eb-1c19-2595e7981c09
+using LinearAlgebra
+
 # ╔═╡ c0db5a3e-f39c-11ea-12fa-3b2f78b7b2b7
 md"""
 Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td1/part3.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td1/part3.ipynb) de ce notebook, et correction au format [Pluto](https://github.com/
@@ -127,6 +130,28 @@ x + 2y + 3z + 4t & = 1, \\
 
 """
 
+# ╔═╡ 813e9b3c-07b0-11eb-1c59-c9ceebb16e26
+md"""
+## Correction
+
+"""
+
+# ╔═╡ 8d518e22-07b0-11eb-2923-8bc524d46cfc
+# Question 1
+function f(n)
+	l = collect((1:n) ./ n)
+	d = collect(1.:n + 1)
+	u = collect((n:-1:1) ./ n)
+	Tridiagonal(l, d, u)
+end
+
+# ╔═╡ 413c9c90-07b1-11eb-2fba-7f4034c59c69
+# Question 2
+[1 2 3 4
+	2 3 4 1
+	-2 4 -5 2
+	8 1 -1 3] \ [1;-2;0;1]
+
 # ╔═╡ Cell order:
 # ╟─c0db5a3e-f39c-11ea-12fa-3b2f78b7b2b7
 # ╟─03cb7526-f392-11ea-123a-797739ba60de
@@ -140,3 +165,7 @@ x + 2y + 3z + 4t & = 1, \\
 # ╟─ca8cb49a-f39c-11ea-307e-97825e864b0f
 # ╟─46497466-f39e-11ea-2634-cd5985460790
 # ╟─7fb06e78-f39f-11ea-38d9-ab51b94af7c5
+# ╟─813e9b3c-07b0-11eb-1c59-c9ceebb16e26
+# ╠═11645006-07b1-11eb-1c19-2595e7981c09
+# ╠═8d518e22-07b0-11eb-2923-8bc524d46cfc
+# ╠═413c9c90-07b1-11eb-2fba-7f4034c59c69
