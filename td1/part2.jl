@@ -9,7 +9,7 @@ using Plots
 
 # ╔═╡ 0162aa9a-f363-11ea-192a-8350869f18df
 md"""
-Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td1/part2.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td1/part2.ipynb) de ce notebook.
+Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td1/part2.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td1/part2.ipynb) de ce notebook, et correction au format [Pluto](https://github.com/vlc1/ene-4102c-td/blob/solution/td1/part2.jl).
 
 """
 
