@@ -6,7 +6,8 @@ using InteractiveUtils
 
 # ╔═╡ c0db5a3e-f39c-11ea-12fa-3b2f78b7b2b7
 md"""
-Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td1/part3.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td1/part3.ipynb) de ce notebook.
+Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td1/part3.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td1/part3.ipynb) de ce notebook, et correction au format [Pluto](https://github.com/
+vlc1/ene-4102c-td/blob/solution/td1/part3.jl).
 
 """
 
@@ -14,18 +15,21 @@ Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td1/part3.jl) 
 md"""
 # Exercice 1 -- Manipulation de matrices
 
-1. Définir le vecteur $u = \left [ \begin{array}{cccccc} 0 & 1 & 2 & 3 & \cdots & 49 & 50 \end{array} \right ]$. Quelle est sa taille ?
-1. Définir le vecteur $v$ contenant les cinq premiers éléments de $u$, et le vecteur $w$ contenant les cinq premiers et les cinq derniers éléments de $u$.
+1. Définir le vecteur ``U = \left [ \begin{array}{cccccc} 0 & 1 & 2 & 3 & \cdots & 49 & 50 \end{array} \right ]``. Quelle est sa taille ?
+1. Définir le vecteur ``V`` contenant les cinq premiers éléments de ``U``, et le vecteur ``W`` contenant les cinq premiers et les cinq derniers éléments de ``U``.
 1. Définir la matrice
-$$M =
+```math
+M =
 \left [ \begin{array}{ccccccc}
 1 & 2 & 3 & \cdots & 8 & 9 & 10 \\
 11 & 12 & 13 & \cdots & 18 & 19 & 20 \\
 21 & 22 & 23 & \cdots & 28 & 29 & 30
 \end{array}
-\right ].$$
-4. Extraire de $M$ les matrices
-$$N =
+\right ].
+```
+4. Extraire de ``M`` les matrices
+```math
+N =
 \left [ \begin{array}{cc}
 1 & 2 \\
 11 & 12 \\
@@ -38,9 +42,10 @@ $$N =
 \end{array} \right ] \quad \mathrm{et} \quad Q =
 \left [ \begin{array}{cc}
 3 & 7 \\
-23 & 27 \end{array} \right ].$$
-5. Extraire de la matrice $M$ la matrice $R$ obtenue en prenant une colonne sur deux.
-1. Définir les matrices $A = \left [ \begin{array}{ccccc} 2 & 4 & 6 & 8 & \cdots & 100 \end{array} \right ]$ et $B = \left [ \begin{array}{ccccc} -1 & -3 & -5 & \cdots & -99 \end{array} \right ]$ puis le vecteur $x = \left [ \begin{array}{ccccccccc} -1 & 2 & -3 & 4 & -5 & 6 & \cdots & -99 & 100 \end{array} \right ]$.
+23 & 27 \end{array} \right ].
+```
+5. Extraire de la matrice ``M`` la matrice ``R`` obtenue en prenant une colonne sur deux.
+1. Définir les matrices ``A = \left [ \begin{array}{ccccc} -1 & -3 & -5 & \cdots & -99 \end{array} \right ]`` et ``B = \left [ \begin{array}{ccccc} 2 & 4 & 6 & 8 & \cdots & 100 \end{array} \right ]`` puis le vecteur ``C = \left [ \begin{array}{ccccccccc} -1 & 2 & -3 & 4 & -5 & 6 & \cdots & -99 & 100 \end{array} \right ]``.
 
 """
 
