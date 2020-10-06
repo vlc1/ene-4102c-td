@@ -110,11 +110,14 @@ y \left ( 1 \right ) & = y_1.
 
 """
 
+# ╔═╡ 8bd6afce-04b5-11eb-39a4-817b45ff8848
+phi() = 1 / √3
+
 # ╔═╡ 65969a00-0419-11eb-3bd9-41931e3e837a
-spacing(n) = 0.0
+spacing(n) = 1 / (n + phi())
 
 # ╔═╡ a8cfd4a4-0418-11eb-3d7d-257307b0d2bd
-mesh(n) = zeros(n)
+mesh(n) = [spacing(n) * (phi() + (j - 1)) for j in 1:n]
 
 # ╔═╡ 103e3098-041b-11eb-2a89-855f41985558
 md"""
@@ -124,17 +127,42 @@ md"""
 
 # ╔═╡ 2603c732-03bf-11eb-3c01-a3b6d7e04ef6
 function laplacian(n)
+	h = spacing(n)
+
 	A = Tridiagonal(zeros.((n - 1, n, n - 1))...)
 
-	for i in 1:n
-		A[i, i] = 1.0
+	# gauche
+	A[1, 1] = 1 / (phi() + 1 / 2) / h ^ 2
+	A[1, 2] = -1 / (phi() + 1 / 2) / h ^ 2
+
+	# intérieur
+	for j in 2:n - 1
+		A[j, j - 1] = -1 / h ^ 2
+		A[j, j] = 2 / h ^ 2
+		A[j, j + 1] = -1 / h ^ 2
 	end
+
+	# droite
+	A[n, n - 1] = -1 / h ^ 2
+	A[n, n] = 2 / h ^ 2
 
 	A
 end
 
 # ╔═╡ 5d9b193a-03c0-11eb-2b91-3f838aaf7c4a
-rhs(n, f, g₀, y₁) = zeros(n)
+# rhs = right hand side = second membre
+function rhs(n, f, g₀, y₁)
+	h, X = spacing(n), mesh(n)
+
+	# source
+	B = f.(X)
+
+	# conditions aux limites
+	B[begin] -= g₀ / (phi() + 1 / 2) / h
+	B[end] += y₁ / h ^ 2
+
+	B
+end
 
 # ╔═╡ a2321e98-041d-11eb-1a10-297553e4aee7
 function numerical(n, f, g₀, y₁)
@@ -150,13 +178,14 @@ md"""
 
 # ╔═╡ 70e982b8-03c0-11eb-283d-67e9be295243
 begin
-	f(x) = -one(x)
-	g₀ = 0.0
-	y₁ = 0.5
+	f(x) = π ^ 2 * sinpi(x)
+	g₀ = π
+	y₁ = 0
+	f, g₀, y₁
 end
 
 # ╔═╡ ea42b9e4-041b-11eb-02cb-c33e4890adb5
-analytical(x) = zero(x)
+analytical(x) = sinpi(x)
 
 # ╔═╡ 444fa398-041c-11eb-3365-8d70eed19687
 md"""
@@ -165,20 +194,19 @@ md"""
 """
 
 # ╔═╡ fa72e35a-041d-11eb-0512-5b63e47199b5
-N = [2, 4, 8, 16]
+N = [2 ^ i for i in 4:6]
 
 # ╔═╡ a1c7017c-03c4-11eb-1425-6b42db5f8878
 begin
 	fig = plot()
+	ϵ = Float64[]
 	for n in N
 		X, Y = mesh(n), numerical(n, f, g₀, y₁)
-		scatter!(fig, X, Y)
-		plot!(fig, X, analytical.(X))
+		push!(ϵ, norm(numerical(n, f, g₀, y₁) .- analytical.(X), Inf))
+		scatter!(fig, X, Y, label = "n = $n")
 	end
+	plot!(fig, analytical, xlim = (0, 1), label = "analytical")
 end
-
-# ╔═╡ 45f2d4f2-041e-11eb-3714-b7a31b6578d0
-fig
 
 # ╔═╡ f6aa25e8-041e-11eb-307b-7b6c8411573c
 md"""
@@ -192,6 +220,7 @@ md"""
 # ╟─5d7fafec-0422-11eb-1062-710a53eb59f0
 # ╟─389f51d8-0318-11eb-1ada-19cfbeb88947
 # ╟─e304b5b2-0324-11eb-0b67-b5b1c5a3ce36
+# ╠═8bd6afce-04b5-11eb-39a4-817b45ff8848
 # ╠═65969a00-0419-11eb-3bd9-41931e3e837a
 # ╠═a8cfd4a4-0418-11eb-3d7d-257307b0d2bd
 # ╟─103e3098-041b-11eb-2a89-855f41985558
@@ -204,5 +233,4 @@ md"""
 # ╟─444fa398-041c-11eb-3365-8d70eed19687
 # ╠═fa72e35a-041d-11eb-0512-5b63e47199b5
 # ╠═a1c7017c-03c4-11eb-1425-6b42db5f8878
-# ╠═45f2d4f2-041e-11eb-3714-b7a31b6578d0
 # ╟─f6aa25e8-041e-11eb-307b-7b6c8411573c
