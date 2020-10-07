@@ -83,12 +83,12 @@ On définit alors
 ```math
 y' \left ( \infty \right ) = 1.
 ```
-5. Résoudre ``\overline{y}`` numériquement à partir de ce [tutoriel](https://diffeq.sciml.ai/stable/tutorials/ode_example/) et en déduire la solution de Blasius intégrant le problème numériquement une seule fois.
+6. Résoudre ``\overline{y}`` numériquement à partir de ce [tutoriel](https://diffeq.sciml.ai/stable/tutorials/ode_example/) et en déduire la solution de Blasius intégrant le problème numériquement une seule fois.
 6. Mesurer le temps écoulé lors de la résolution (`@elapsed`), et comparer avec le temps écoulé avec la méthode de tir.
 
 ## Vérification
 
-7. Vérifier qu'augmenter la taille du domaine d'intégration n'affecte pas la solution numérique.
+8. Vérifier qu'augmenter la taille du domaine d'intégration n'affecte pas la solution numérique.
 
 """
 
