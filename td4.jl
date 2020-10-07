@@ -58,9 +58,11 @@ function bc!(r, y, p, x)
 end
 ```
 
+3. Mesurer le temps écoulé lors de la résolution (`@elapsed`).
+
 ## Problème de Cauchy et symétrie
 
-3. Montrer que l'équation de Blasius et les conditions en ``0`` sont inchangées par la transformation
+4. Montrer que l'équation de Blasius et les conditions en ``0`` sont inchangées par la transformation
 ```math
 \begin{aligned}
 \overline{y} & \leftarrow c y, \\
@@ -77,15 +79,16 @@ On définit alors
 \alpha = \overline{y}' \left ( \infty \right ).
 ```
 
-4. Montrer que le choix de la constante ``c = \sqrt{\alpha}`` mène à
+5. Montrer que le choix de la constante ``c = \sqrt{\alpha}`` mène à
 ```math
 y' \left ( \infty \right ) = 1.
 ```
 5. Résoudre ``\overline{y}`` numériquement à partir de ce [tutoriel](https://diffeq.sciml.ai/stable/tutorials/ode_example/) et en déduire la solution de Blasius intégrant le problème numériquement une seule fois.
+6. Mesurer le temps écoulé lors de la résolution (`@elapsed`), et comparer avec le temps écoulé avec la méthode de tir.
 
 ## Vérification
 
-6. Vérifier qu'augmenter la taille du domaine d'intégration n'affecte pas la solution numérique.
+7. Vérifier qu'augmenter la taille du domaine d'intégration n'affecte pas la solution numérique.
 
 """
 
