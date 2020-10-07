@@ -6,12 +6,9 @@ using InteractiveUtils
 
 # ╔═╡ 028e9c9a-08ac-11eb-0f5e-01125e8da26f
 begin
-	using Zygote, StaticArrays
+	using Zygote, StaticArrays, LinearAlgebra, Kronecker
 	import Zygote.hessian
 end
-
-# ╔═╡ 61a36274-028f-11eb-06c9-91ed9a2056f7
-using LinearAlgebra, Kronecker
 
 # ╔═╡ 4b159bea-08ab-11eb-1a40-a768dfbc2051
 md"""
@@ -45,10 +42,12 @@ begin
 	phi() = 1 / √3
 	spacing(n) = 1 / (n + phi())
 	mesh(n) = [spacing(n) * (phi() + (j - 1)) for j in 1:n]
+	#=
 	function numerical(n, f, g₀, y₁)
 		A, B = laplacian(n), rhs(n, f, g₀, y₁)
 		A \ B
 	end
+	=#
 	function laplacian(n)
 		h = spacing(n)
 
@@ -88,7 +87,7 @@ end
 
 # ╔═╡ fed3b534-08d0-11eb-3442-65c59de227c2
 begin
-	θ(x, y) = x ^ 2 / 2 + y ^ 2 / 2
+	θ(x, y) = x ^ 2 / 2 + y ^ 2 / 2 + sin(y) * cos(x)
 	θ(x::AbstractVector) = θ(x[1], x[2])
 end
 
@@ -101,84 +100,46 @@ begin
 	top(f) = x -> f(x, one(x))
 end
 
-# ╔═╡ 2b4c801a-08d5-11eb-1b05-3d4d10ba82b8
-function (x, y)
-	x + y
-end
-
 # ╔═╡ cd4c9688-08a4-11eb-1dce-7b6bdf78f402
 n = (4, 8)
+
+# ╔═╡ f5570038-08da-11eb-25a4-ab003a6a7e16
+h = spacing.(n)
 
 # ╔═╡ 37d5bf6a-08d3-11eb-2676-b946778d1eea
 x, y = mesh.(n)
 
 # ╔═╡ 4ef4ed6a-08d3-11eb-3fc3-4963a265809a
 begin
+	# source
 	b = map(Tuple.(CartesianIndices(n))) do (i, j)
 		Δ(θ)(x[i], y[j])
 	end
+
+	# boundary conditions
+	b[1, :] .+= left(θ).(y) / (phi() + 1 / 2) / h[1]
+	b[end, :] .-= right(θ).(y) / h[1] ^ 2
+	b[:, 1] .+= bottom(θ).(x) / (phi() + 1 / 2) / h[2]
+	b[:, end] .-= top(θ).(x) / h[2] ^ 2
 end
 
-# ╔═╡ b9a88d00-08d4-11eb-3a12-4de04966d8e1
-CartesianIndices(n)
-
-# ╔═╡ c1c967e8-08d4-11eb-1dcf-df221c74b480
-Tuple(index)
-
-# ╔═╡ 801d5214-08d4-11eb-2e5d-dbdfb45d357d
-#size(b)
-
-# ╔═╡ f30d9adc-08d3-11eb-297d-77c19a5432b1
+# ╔═╡ 8c5f6f3e-08da-11eb-3546-f9e75010c2dc
 begin
-	foo = [2, 3, 4, 5]
-	bar = [6 7 8 9]
-	typeof.((foo, bar))
+	id = Diagonal.(fill.(-1.0, n))
+	fd = laplacian.(n)
+	A = kron(id[2], fd[1]) + kron(fd[2], id[1])
 end
 
-# ╔═╡ d57252f8-08a4-11eb-340f-cda87449ccee
-laplacian.(n)
+# ╔═╡ f8e7f1de-08db-11eb-3e1b-4177c637d838
+numerical = reshape(A \ reshape(b, prod(n)), n...)
 
-# ╔═╡ 4f6452bc-028f-11eb-3146-47029f8d6209
-c, d = -1 .* ones.(n .- 1), 2 .* ones.(n)
+# ╔═╡ f1510d38-08dc-11eb-256b-5709d1bef09e
+exact = map(Tuple.(CartesianIndices(n))) do (i, j)
+	θ(x[i], y[j])
+end
 
-# ╔═╡ 26953684-0290-11eb-253f-6dc5b199298a
-A = Diagonal.(ones.(n))
-
-# ╔═╡ 5e08958a-028f-11eb-2562-79e5d34c1e5a
-B = Tridiagonal.(c, d, c)
-
-# ╔═╡ abc7dc54-028f-11eb-0dc3-87a5587fa835
-kron(A[1], B[2]) + kron(B[1], A[2])
-
-# ╔═╡ 79e6efae-028f-11eb-2e7a-7170dadf75c6
-kron(A...)
-
-# ╔═╡ e7b4f602-028f-11eb-39b2-bd42f7bf0e93
-UniformScaling(4)
-
-# ╔═╡ a4d30098-048a-11eb-38e3-5bfdfa4792ac
-id = @. Diagonal(ones(n))
-
-# ╔═╡ b7e78fe6-048a-11eb-20f7-31bf91e086d3
-der = @. Tridiagonal(ones(n - 1), -2ones(n), ones(n - 1))
-
-# ╔═╡ ea8ab52c-048a-11eb-106e-bd3852a996d6
-#kronecker(id[1], id[2], der[3])
-
-# ╔═╡ 110e3124-048b-11eb-2e0e-77dcd19bf0ca
-#kronecker(der[1], id[2], id[3])
-
-# ╔═╡ a75408fc-048b-11eb-2c27-7712e459f9f9
-#laplacian = kronecker(der[1], id[2], id[3]) + kronecker(id[1], der[2], id[3]) + kronecker(id[1], id[2], der[3])
-
-# ╔═╡ fbe58ed8-048b-11eb-2c27-2588a9488baf
-#laplacian = kronecker(der[1], id[2]) + kronecker(id[1], der[2])
-
-# ╔═╡ 4bdeab8e-048c-11eb-2323-59e5c6f74e73
-#b = rand(prod(n))
-
-# ╔═╡ a561f8e6-048c-11eb-0206-61e13bc3e06c
-#x = laplacian \ b
+# ╔═╡ 7db5ab58-08dd-11eb-3f77-2f628e94ca40
+norm(numerical - exact)
 
 # ╔═╡ Cell order:
 # ╠═028e9c9a-08ac-11eb-0f5e-01125e8da26f
@@ -187,27 +148,11 @@ der = @. Tridiagonal(ones(n - 1), -2ones(n), ones(n - 1))
 # ╠═ecc8d690-08a2-11eb-04ab-275138e29f23
 # ╠═fed3b534-08d0-11eb-3442-65c59de227c2
 # ╠═90130a3a-08a5-11eb-0c26-ff20028c13a0
-# ╠═2b4c801a-08d5-11eb-1b05-3d4d10ba82b8
 # ╠═cd4c9688-08a4-11eb-1dce-7b6bdf78f402
+# ╠═f5570038-08da-11eb-25a4-ab003a6a7e16
 # ╠═37d5bf6a-08d3-11eb-2676-b946778d1eea
 # ╠═4ef4ed6a-08d3-11eb-3fc3-4963a265809a
-# ╠═b9a88d00-08d4-11eb-3a12-4de04966d8e1
-# ╠═c1c967e8-08d4-11eb-1dcf-df221c74b480
-# ╠═801d5214-08d4-11eb-2e5d-dbdfb45d357d
-# ╠═f30d9adc-08d3-11eb-297d-77c19a5432b1
-# ╠═d57252f8-08a4-11eb-340f-cda87449ccee
-# ╠═61a36274-028f-11eb-06c9-91ed9a2056f7
-# ╠═4f6452bc-028f-11eb-3146-47029f8d6209
-# ╠═26953684-0290-11eb-253f-6dc5b199298a
-# ╠═5e08958a-028f-11eb-2562-79e5d34c1e5a
-# ╠═abc7dc54-028f-11eb-0dc3-87a5587fa835
-# ╠═79e6efae-028f-11eb-2e7a-7170dadf75c6
-# ╠═e7b4f602-028f-11eb-39b2-bd42f7bf0e93
-# ╠═a4d30098-048a-11eb-38e3-5bfdfa4792ac
-# ╠═b7e78fe6-048a-11eb-20f7-31bf91e086d3
-# ╠═ea8ab52c-048a-11eb-106e-bd3852a996d6
-# ╠═110e3124-048b-11eb-2e0e-77dcd19bf0ca
-# ╠═a75408fc-048b-11eb-2c27-7712e459f9f9
-# ╠═fbe58ed8-048b-11eb-2c27-2588a9488baf
-# ╠═4bdeab8e-048c-11eb-2323-59e5c6f74e73
-# ╠═a561f8e6-048c-11eb-0206-61e13bc3e06c
+# ╠═8c5f6f3e-08da-11eb-3546-f9e75010c2dc
+# ╠═f8e7f1de-08db-11eb-3e1b-4177c637d838
+# ╠═f1510d38-08dc-11eb-256b-5709d1bef09e
+# ╠═7db5ab58-08dd-11eb-3f77-2f628e94ca40
