@@ -1,14 +1,14 @@
 ### A Pluto.jl notebook ###
-# v0.11.14
+# v0.12.0
 
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 028e9c9a-08ac-11eb-0f5e-01125e8da26f
-using Zygote
-
-# ╔═╡ 52def07c-08a8-11eb-05fb-9f9caf480190
-using BenchmarkTools
+begin
+	using Zygote, StaticArrays
+	import Zygote.hessian
+end
 
 # ╔═╡ 61a36274-028f-11eb-06c9-91ed9a2056f7
 using LinearAlgebra, Kronecker
@@ -86,45 +86,54 @@ begin
 	end
 end
 
-# ╔═╡ f6a57860-08a4-11eb-2363-2fc5d35b853b
-
-
-# ╔═╡ 0d4d8be0-08aa-11eb-09e2-3738916f0581
-θ(x) = x[1] ^ 3 * x[2] ^ 4
+# ╔═╡ fed3b534-08d0-11eb-3442-65c59de227c2
+begin
+	θ(x, y) = x ^ 2 / 2 + y ^ 2 / 2
+	θ(x::AbstractVector) = θ(x[1], x[2])
+end
 
 # ╔═╡ 90130a3a-08a5-11eb-0c26-ff20028c13a0
 begin
-	Δ(θ) = xy -> Zygote.hessian(θ, xy)
-	left(θ) = y -> getindex(getindex(gradient(θ, [zero(y), y]), 1), 1)
-	bottom(θ) = x -> getindex(getindex(gradient(θ, [x, zero(x)]), 1), 2)
-	right(θ) = y -> θ([one(y), y])
-	top(θ) = x -> θ([x, one(x)])
+	Δ(f) = (x, y) -> first(hessian(f, SVector(x, y))) + last(hessian(f, SVector(x, y)))
+	left(f) = y -> first(first(gradient(f, SVector(zero(y), y))))
+	bottom(f) = x -> last(first(gradient(f, SVector(x, zero(x)))))
+	right(f) = y -> f(one(y), y)
+	top(f) = x -> f(x, one(x))
 end
 
-# ╔═╡ e5dca68a-08a8-11eb-10df-9f537313df55
-left(θ)
-
-# ╔═╡ e25ed0f8-08aa-11eb-110f-d32dfc467d40
-gradient(θ, [1., 2.])
-
-# ╔═╡ 024e6440-08a7-11eb-06c0-87709bc08bf6
-function h(f, x, y)
-	g₁(f, x, y) = getindex(gradient(f, x, y), 1)
-	g₂(f, x, y) = getindex(gradient(f, x, y), 2)
-	getindex(gradient(g₁, x, y), 1) + getindex(gradient(g₂, x, y), 2)
+# ╔═╡ 2b4c801a-08d5-11eb-1b05-3d4d10ba82b8
+function (x, y)
+	x + y
 end
-
-# ╔═╡ d8fa560c-08a7-11eb-1551-5712802dc20e
-@btime Δ(f)([1., 2.])
-
-# ╔═╡ 439a7b74-08a6-11eb-1b20-7f3941c2978d
-h(f, 1., 2.)
-
-# ╔═╡ ee9c5fba-08a6-11eb-016c-25374c0912d8
-Δ(1., 2.)
 
 # ╔═╡ cd4c9688-08a4-11eb-1dce-7b6bdf78f402
 n = (4, 8)
+
+# ╔═╡ 37d5bf6a-08d3-11eb-2676-b946778d1eea
+x, y = mesh.(n)
+
+# ╔═╡ 4ef4ed6a-08d3-11eb-3fc3-4963a265809a
+begin
+	b = map(Tuple.(CartesianIndices(n))) do (i, j)
+		Δ(θ)(x[i], y[j])
+	end
+end
+
+# ╔═╡ b9a88d00-08d4-11eb-3a12-4de04966d8e1
+CartesianIndices(n)
+
+# ╔═╡ c1c967e8-08d4-11eb-1dcf-df221c74b480
+Tuple(index)
+
+# ╔═╡ 801d5214-08d4-11eb-2e5d-dbdfb45d357d
+#size(b)
+
+# ╔═╡ f30d9adc-08d3-11eb-297d-77c19a5432b1
+begin
+	foo = [2, 3, 4, 5]
+	bar = [6 7 8 9]
+	typeof.((foo, bar))
+end
 
 # ╔═╡ d57252f8-08a4-11eb-340f-cda87449ccee
 laplacian.(n)
@@ -166,7 +175,7 @@ der = @. Tridiagonal(ones(n - 1), -2ones(n), ones(n - 1))
 #laplacian = kronecker(der[1], id[2]) + kronecker(id[1], der[2])
 
 # ╔═╡ 4bdeab8e-048c-11eb-2323-59e5c6f74e73
-b = rand(prod(n))
+#b = rand(prod(n))
 
 # ╔═╡ a561f8e6-048c-11eb-0206-61e13bc3e06c
 #x = laplacian \ b
@@ -174,19 +183,18 @@ b = rand(prod(n))
 # ╔═╡ Cell order:
 # ╠═028e9c9a-08ac-11eb-0f5e-01125e8da26f
 # ╟─4b159bea-08ab-11eb-1a40-a768dfbc2051
-# ╠═4a689a06-08a3-11eb-3461-fd2e89b7d99f
+# ╟─4a689a06-08a3-11eb-3461-fd2e89b7d99f
 # ╠═ecc8d690-08a2-11eb-04ab-275138e29f23
-# ╠═f6a57860-08a4-11eb-2363-2fc5d35b853b
-# ╠═0d4d8be0-08aa-11eb-09e2-3738916f0581
+# ╠═fed3b534-08d0-11eb-3442-65c59de227c2
 # ╠═90130a3a-08a5-11eb-0c26-ff20028c13a0
-# ╠═e5dca68a-08a8-11eb-10df-9f537313df55
-# ╠═e25ed0f8-08aa-11eb-110f-d32dfc467d40
-# ╠═024e6440-08a7-11eb-06c0-87709bc08bf6
-# ╠═d8fa560c-08a7-11eb-1551-5712802dc20e
-# ╠═52def07c-08a8-11eb-05fb-9f9caf480190
-# ╠═439a7b74-08a6-11eb-1b20-7f3941c2978d
-# ╠═ee9c5fba-08a6-11eb-016c-25374c0912d8
+# ╠═2b4c801a-08d5-11eb-1b05-3d4d10ba82b8
 # ╠═cd4c9688-08a4-11eb-1dce-7b6bdf78f402
+# ╠═37d5bf6a-08d3-11eb-2676-b946778d1eea
+# ╠═4ef4ed6a-08d3-11eb-3fc3-4963a265809a
+# ╠═b9a88d00-08d4-11eb-3a12-4de04966d8e1
+# ╠═c1c967e8-08d4-11eb-1dcf-df221c74b480
+# ╠═801d5214-08d4-11eb-2e5d-dbdfb45d357d
+# ╠═f30d9adc-08d3-11eb-297d-77c19a5432b1
 # ╠═d57252f8-08a4-11eb-340f-cda87449ccee
 # ╠═61a36274-028f-11eb-06c9-91ed9a2056f7
 # ╠═4f6452bc-028f-11eb-3146-47029f8d6209
