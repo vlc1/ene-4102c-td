@@ -127,9 +127,13 @@ begin
 	plot(bvs, xlim = (0, 5), ylim = (0, 1), lw = 2)
 end
 
+# ╔═╡ 2347d4ac-089c-11eb-2828-4faa854e9111
+# Question 3
+@elapsed solve(bvp, Shooting(Tsit5()))
+
 # ╔═╡ f65e3abe-0894-11eb-215d-531bb2d13320
 md"""
-3. La transformation proposée s'écrit
+4. La transformation proposée s'écrit
 ```math
 y \left ( x \right ) = c ^ {- 1} \overline{y} \left ( \frac{x}{c} \right )
 ```
@@ -173,7 +177,7 @@ c ^ {-2} \overline{y} \left ( 0 \right ) & = 0
 
 # ╔═╡ 9c483612-0897-11eb-0242-17556b0c5fa6
 md"""
-4. On remplace la condition
+5. On remplace la condition
 ```math
 y' \left ( \infty \right ) = 1
 ```
@@ -202,7 +206,7 @@ En passant à la limite, on obtient donc que
 """
 
 # ╔═╡ 4606747a-0898-11eb-0b8e-234ed1de97b6
-# Question 5
+# Question 6
 begin
 	ivp = ODEProblem(blasius!, u₀, (0., 100.))
 
@@ -212,6 +216,10 @@ begin
 
 	plot(x -> ivs(x)[2] / α ^ 2, xlim = (0, 5), ylim = (0, 2), lw = 2)
 end
+
+# ╔═╡ bd9ba1c6-089c-11eb-1b79-f7f8493fefe7
+# Question 7
+@elapsed solve(ivp)
 
 # ╔═╡ e304b5b2-0324-11eb-0b67-b5b1c5a3ce36
 md"""
@@ -346,9 +354,11 @@ md"""
 # ╟─389f51d8-0318-11eb-1ada-19cfbeb88947
 # ╟─dc466a0a-0893-11eb-2367-89551d26022c
 # ╠═51592eb2-0893-11eb-14bd-53570b752566
+# ╠═2347d4ac-089c-11eb-2828-4faa854e9111
 # ╟─f65e3abe-0894-11eb-215d-531bb2d13320
 # ╟─9c483612-0897-11eb-0242-17556b0c5fa6
 # ╠═4606747a-0898-11eb-0b8e-234ed1de97b6
+# ╠═bd9ba1c6-089c-11eb-1b79-f7f8493fefe7
 # ╟─e304b5b2-0324-11eb-0b67-b5b1c5a3ce36
 # ╠═8bd6afce-04b5-11eb-39a4-817b45ff8848
 # ╠═65969a00-0419-11eb-3bd9-41931e3e837a
