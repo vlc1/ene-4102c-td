@@ -41,7 +41,7 @@ L'une des difficultés rencontrées lors de la résolution numérique de ce prob
 ## Problème aux limites et méthode de tir
 
 1. Quel est le degré de cette EDO ? La réécrire sous la forme d'un système d'EDO d'ordre 1.
-2. À partir de ce [tutoriel](https://diffeq.sciml.ai/stable/tutorials/bvp_example/), résoudre l'équation de Blasius sur le domaine ``\left [ 0, 10000 \right ]``. On pourra utiliser les fonctions suivantes.
+2. À partir de ce [tutoriel](https://diffeq.sciml.ai/stable/tutorials/bvp_example/), résoudre l'équation de Blasius sur le domaine ``\left [ 0, 100 \right ]``. On pourra utiliser les fonctions suivantes.
 
 ```julia
 function blasius!(z, y, p, x)
@@ -191,7 +191,7 @@ md"""
 # ╔═╡ Cell order:
 # ╠═2aea5cfc-03bf-11eb-3922-7b05c68e795a
 # ╟─5d7fafec-0422-11eb-1062-710a53eb59f0
-# ╟─389f51d8-0318-11eb-1ada-19cfbeb88947
+# ╠═389f51d8-0318-11eb-1ada-19cfbeb88947
 # ╟─e304b5b2-0324-11eb-0b67-b5b1c5a3ce36
 # ╠═65969a00-0419-11eb-3bd9-41931e3e837a
 # ╠═a8cfd4a4-0418-11eb-3d7d-257307b0d2bd
