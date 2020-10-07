@@ -89,6 +89,127 @@ y' \left ( \infty \right ) = 1.
 
 """
 
+# ╔═╡ dc466a0a-0893-11eb-2367-89551d26022c
+md"""
+## Correction
+
+1. Il s'agit d'une équation différentielle ordinaire scalaire et autonome, non-linéaire et de degré 3. On peut la réécrire sous la forme d'un système de 3 équations :
+```math
+\left \{ \begin{aligned}
+y_1' & = y_2, \\
+y_2' & = y_3, \\
+y_3' & = -y_1 y_3.
+\end{aligned} \right .
+```
+
+"""
+
+# ╔═╡ 51592eb2-0893-11eb-14bd-53570b752566
+# Question 2
+begin
+	u₀ = [0., 0., 1.]
+
+	blasius!(z, y, p, x) = z .= [y[2], y[3], -y[1] * y[3]]
+
+	function bc!(r, y, p, x)
+		r[1] = y[begin][1]
+		r[2] = y[begin][2]
+		r[3] = y[end][2] - 1
+	end
+
+	bvp = BVProblem(blasius!, bc!, [0., 0., 1.], (0., 100.))
+
+	bvs = solve(bvp, Shooting(Tsit5()))
+
+	plot(bvs, xlim = (0, 5), ylim = (0, 1), lw = 2)
+end
+
+# ╔═╡ f65e3abe-0894-11eb-215d-531bb2d13320
+md"""
+3. La transformation proposée s'écrit
+```math
+y \left ( x \right ) = c ^ {- 1} \overline{y} \left ( \frac{x}{c} \right )
+```
+et donc
+```math
+\left \{ \begin{aligned}
+y' \left ( x \right ) & = c ^ {- 2} \overline{y}' \left ( \overline{x} \right ), \\
+y'' \left ( x \right ) & = c ^ {- 3} \overline{y}'' \left ( \overline{x} \right ), \\
+y''' \left ( x \right ) & = c ^ {- 4} \overline{y}''' \left ( \overline{x} \right ).
+\end{aligned} \right .
+```
+
+On substituant dans l'EDO, on trouve
+```math
+\begin{aligned}
+y''' \left ( x \right ) + y \left ( x \right ) y'' \left ( x \right ) & = c ^ {- 4} \overline{y}''' \left ( \overline{x} \right ) + c ^ {- 1} \overline{y} \left ( \overline{x} \right ) c ^ {-3} \overline{y}'' \left ( \overline{x} \right ), \\
+& = c ^ {-4} \left [ \overline{y}''' \left ( \overline{x} \right ) + \overline{y} \left ( \overline{x} \right ) \overline{y}'' \left ( \overline{x} \right ) \right ].
+\end{aligned}
+```
+
+On en déduit donc que
+```math
+\overline{y}''' \left ( \overline{x} \right ) + \overline{y} \left ( \overline{x} \right ) \overline{y}'' \left ( \overline{x} \right ) = 0.
+```
+
+En ce qui concerne les conditions initiales homogènes, ``x = 0`` implique ``\overline{x} = 0`` d'où
+```math
+\left \{ \begin{aligned}
+y \left ( 0 \right ) & = 0, \\
+y' \left ( 0 \right ) & = 0,
+\end{aligned} \right . \quad \Rightarrow \quad \left \{ \begin{aligned}
+c ^ {-1} \overline{y} \left ( 0 \right ) & = 0, \\
+c ^ {-2} \overline{y} \left ( 0 \right ) & = 0
+\end{aligned} \right . \quad \Rightarrow \quad \left \{ \begin{aligned}
+\overline{y} \left ( 0 \right ) & = 0, \\
+\overline{y}' \left ( 0 \right ) & = 0.
+\end{aligned} \right .
+```
+
+"""
+
+# ╔═╡ 9c483612-0897-11eb-0242-17556b0c5fa6
+md"""
+4. On remplace la condition
+```math
+y' \left ( \infty \right ) = 1
+```
+par
+```math
+\overline{y}' \left ( 0 \right ) = 1
+```
+et on note enfin
+```math
+\alpha \equiv \overline{y}' \left ( \infty \right ).
+```
+
+On sait d'après la question précédente que
+```math
+\overline{y}' \left ( \overline{x} \right ) = c ^ 2 y' \left ( x \right ).
+```
+Or dans la limite ``x \mapsto \infty``,
+```math
+y' \left ( x \right ) \mapsto 1.
+```
+En passant à la limite, on obtient donc que
+```math
+\alpha = c ^ 2 \quad \Rightarrow \quad c = \sqrt{\alpha}.
+```
+
+"""
+
+# ╔═╡ 4606747a-0898-11eb-0b8e-234ed1de97b6
+# Question 5
+begin
+	ivp = ODEProblem(blasius!, u₀, (0., 100.))
+
+	ivs = solve(ivp)
+
+	α = √ivs[end][2]
+
+	plot(x -> ivs(x)[2] / α ^ 2, xlim = (0, 5), ylim = (0, 2), lw = 2)
+end
+
 # ╔═╡ e304b5b2-0324-11eb-0b67-b5b1c5a3ce36
 md"""
 # Conduction stationnaire dans une barre
@@ -220,6 +341,11 @@ md"""
 # ╠═2aea5cfc-03bf-11eb-3922-7b05c68e795a
 # ╟─5d7fafec-0422-11eb-1062-710a53eb59f0
 # ╟─389f51d8-0318-11eb-1ada-19cfbeb88947
+# ╟─dc466a0a-0893-11eb-2367-89551d26022c
+# ╠═51592eb2-0893-11eb-14bd-53570b752566
+# ╟─f65e3abe-0894-11eb-215d-531bb2d13320
+# ╟─9c483612-0897-11eb-0242-17556b0c5fa6
+# ╠═4606747a-0898-11eb-0b8e-234ed1de97b6
 # ╟─e304b5b2-0324-11eb-0b67-b5b1c5a3ce36
 # ╠═8bd6afce-04b5-11eb-39a4-817b45ff8848
 # ╠═65969a00-0419-11eb-3bd9-41931e3e837a
