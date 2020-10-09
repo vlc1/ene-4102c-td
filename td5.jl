@@ -10,6 +10,12 @@ begin
 	import Zygote.hessian
 end
 
+# ╔═╡ faaba6b8-0a08-11eb-391e-89ae75354ccf
+md"""
+Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td5.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td5/énoncé.ipynb) de ce notebook.
+
+"""
+
 # ╔═╡ 4a689a06-08a3-11eb-3461-fd2e89b7d99f
 md"""
 # Method of Manufactured Solutions
@@ -171,6 +177,7 @@ md"""
 """
 
 # ╔═╡ Cell order:
+# ╟─faaba6b8-0a08-11eb-391e-89ae75354ccf
 # ╠═028e9c9a-08ac-11eb-0f5e-01125e8da26f
 # ╟─4a689a06-08a3-11eb-3461-fd2e89b7d99f
 # ╠═fed3b534-08d0-11eb-3442-65c59de227c2
