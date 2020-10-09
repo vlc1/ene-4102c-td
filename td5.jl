@@ -49,12 +49,11 @@ On se propose d'employer la *Method of Manufactured Solutions* afin de vérifier
 ```math
 \theta \colon \left ( x, y \right ) \mapsto \sin \left ( \pi x \right ) \cos \left (\pi y \right ).
 ```
-2. Les fonctions `Δ`, `left`, `bottom`, `right` et `top` prennent ``\theta`` comme argument et retournent respectivement ``\omega``, ``g_1``, ``g_2``, ``\theta_1`` et ``\theta_2`` automatiquement grâce à la bibliothèque d'*Algorithmic Differentiation* `Zygote.jl`. Vérifier graphiquement que ces fonctions retournent bien le résultat attendu.
 
 """
 
 # ╔═╡ fed3b534-08d0-11eb-3442-65c59de227c2
-# Question 2
+# Question 1
 begin
 	θ(x, y) = x + y
 	ω(x, y) = zero(x) + zero(y)
@@ -63,6 +62,15 @@ begin
 	θ₁(y) = y
 	θ₂(x) = x
 end
+
+# ╔═╡ 379c7ea2-0a69-11eb-3625-ebc71f6b7a93
+md"""
+2. Les fonctions `Δ`, `left`, `bottom`, `right` et `top` prennent ``\theta`` comme argument et retournent respectivement ``\omega``, ``g_1``, ``g_2``, ``\theta_1`` et ``\theta_2`` automatiquement grâce à la bibliothèque d'*Algorithmic Differentiation* `Zygote.jl`. Vérifier graphiquement que ces fonctions retournent bien le résultat attendu.
+
+"""
+
+# ╔═╡ 4de68e1e-0a69-11eb-2381-0f4c452b5a9b
+# Question 2
 
 # ╔═╡ 90130a3a-08a5-11eb-0c26-ff20028c13a0
 # Question 2 - NE PAS MODIFIER
@@ -181,6 +189,8 @@ md"""
 # ╠═028e9c9a-08ac-11eb-0f5e-01125e8da26f
 # ╟─4a689a06-08a3-11eb-3461-fd2e89b7d99f
 # ╠═fed3b534-08d0-11eb-3442-65c59de227c2
+# ╟─379c7ea2-0a69-11eb-3625-ebc71f6b7a93
+# ╠═4de68e1e-0a69-11eb-2381-0f4c452b5a9b
 # ╠═90130a3a-08a5-11eb-0c26-ff20028c13a0
 # ╟─9b479164-0a03-11eb-3c93-a1e929c5fd2e
 # ╠═b669d1c8-0a03-11eb-0d79-d7232b76bc79
