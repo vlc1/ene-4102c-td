@@ -12,7 +12,7 @@ end
 
 # ╔═╡ faaba6b8-0a08-11eb-391e-89ae75354ccf
 md"""
-Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td5.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td5/sujet.ipynb) de ce notebook.
+Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td5.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td5/sujet.ipynb) de ce notebook, et correction au format [Pluto](https://github.com/vlc1/ene-4102c-td/blob/solution/td5.jl).
 
 """
 
