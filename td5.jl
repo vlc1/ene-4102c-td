@@ -6,7 +6,7 @@ using InteractiveUtils
 
 # ╔═╡ 028e9c9a-08ac-11eb-0f5e-01125e8da26f
 begin
-	using Zygote, StaticArrays, LinearAlgebra, Kronecker, LsqFit
+	using Plots, Zygote, StaticArrays, LinearAlgebra, Kronecker, LsqFit
 	import Zygote.hessian
 end
 
@@ -69,9 +69,6 @@ md"""
 
 """
 
-# ╔═╡ 4de68e1e-0a69-11eb-2381-0f4c452b5a9b
-# Question 2
-
 # ╔═╡ 90130a3a-08a5-11eb-0c26-ff20028c13a0
 # Question 2 - NE PAS MODIFIER
 begin
@@ -81,6 +78,14 @@ begin
 	bottom(f, x) = last(gradient(f, x, zero(x)))
 	right(f, y) = f(one(y), y)
 	top(f, x) = f(x, one(x))
+end
+
+# ╔═╡ 4de68e1e-0a69-11eb-2381-0f4c452b5a9b
+# Question 2
+begin
+	local fig
+	fig = plot(g₁, xlim = (0, 1))
+	scatter!(fig, x -> left(θ, x))
 end
 
 # ╔═╡ 9b479164-0a03-11eb-3c93-a1e929c5fd2e
@@ -195,7 +200,7 @@ end
 
 # ╔═╡ d4660498-0a04-11eb-2f37-7310b0a79832
 # Question 6
-error(f, n) = norm(numerical(f, n) - exact(f, n))
+error(f, n) = norm(numerical(f, n) - exact(f, n), Inf)
 
 # ╔═╡ f9b732a4-0a05-11eb-3f07-df7a037b4699
 md"""
@@ -205,8 +210,14 @@ md"""
 
 # ╔═╡ 52280146-0a68-11eb-0f38-abc19c00370a
 begin
+	local fig
 	n = [(2 ^ i, 2 ^ i) for i in 4:6]
-	ϵ, h = spacing.(first.(n)), error.(θ, n)
+	h, ϵ = spacing.(first.(n)), error.(θ, n)
+	model(x, p) = p[1] .+ p[2] .* x
+	fit = curve_fit(model, log.(h), log.(ϵ), ones(2))
+	fig = scatter(h, ϵ, xscale = :log, yscale = :log, label = "ϵ")
+	plot!(fig, h, exp.(model(log.(h), fit.param)),
+		lw = 2, label = "Order $(fit.param[2])")
 end
 
 # ╔═╡ Cell order:
