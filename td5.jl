@@ -56,12 +56,12 @@ On se propose d'employer la *Method of Manufactured Solutions* afin de vérifier
 # ╔═╡ fed3b534-08d0-11eb-3442-65c59de227c2
 # Question 2
 begin
-	θ(x, y) = x + y
-	ω(x, y) = zero(x) + zero(y)
-	g₁(y) = one(y)
-	g₂(x) = one(x)
-	θ₁(y) = y
-	θ₂(x) = x
+	θ(x, y) = sinpi(x) * cospi(y)
+	ω(x, y) = -2π ^ 2 * sinpi(x) * cospi(y)
+	g₁(y) = π * cospi(y)
+	g₂(x) = zero(x)
+	θ₁(y) = zero(y)
+	θ₂(x) = -sinpi(x)
 end
 
 # ╔═╡ 90130a3a-08a5-11eb-0c26-ff20028c13a0
@@ -81,12 +81,6 @@ md"""
 
 """
 
-# ╔═╡ b669d1c8-0a03-11eb-0d79-d7232b76bc79
-# Question 3
-function exact(f, n)
-	zeros(n...)
-end
-
 # ╔═╡ ecc8d690-08a2-11eb-04ab-275138e29f23
 # Question 3 - NE PAS MODIFIER
 phi() = 1 / √3
@@ -96,8 +90,18 @@ phi() = 1 / √3
 spacing(n) = 1 / (n + phi())
 
 # ╔═╡ 90791206-0a02-11eb-1d91-19f5454706a7
-# Question 4 - NE PAS MODIFIER
+# Question 5 - NE PAS MODIFIER
 mesh(n) = [spacing(n) * (phi() + (j - 1)) for j in 1:n]
+
+# ╔═╡ b669d1c8-0a03-11eb-0d79-d7232b76bc79
+# Question 3
+function exact(f, n)
+	x, y = mesh.(n)
+
+	map(Tuple.(CartesianIndices(n))) do (i, j)
+		f(x[i], y[j])
+	end
+end
 
 # ╔═╡ 62510d90-0a01-11eb-12a7-a73a23bd3917
 md"""
@@ -144,20 +148,6 @@ md"""
 
 """
 
-# ╔═╡ 90791206-0a02-11eb-1d91-19f5454706a7
-# Question 5 - NE PAS MODIFIER
-mesh(n) = [spacing(n) * (phi() + (j - 1)) for j in 1:n]
-
-# ╔═╡ b669d1c8-0a03-11eb-0d79-d7232b76bc79
-# Question 3
-function exact(f, n)
-	x, y = mesh.(n)
-
-	map(Tuple.(CartesianIndices(n))) do (i, j)
-		f(x[i], y[j])
-	end
-end
-
 # ╔═╡ 4ef4ed6a-08d3-11eb-3fc3-4963a265809a
 # Question 5
 function rhs(f, n)
@@ -166,14 +156,14 @@ function rhs(f, n)
 
 	# source
 	b = map(Tuple.(CartesianIndices(n))) do (i, j)
-		Δ(f)(x[i], y[j])
+		Δ(f, x[i], y[j])
 	end
 
 	# boundary conditions
-	b[1, :] .+= left(f).(y) / (phi() + 1 / 2) / h[1]
-	b[end, :] .-= right(f).(y) / h[1] ^ 2
-	b[:, 1] .+= bottom(f).(x) / (phi() + 1 / 2) / h[2]
-	b[:, end] .-= top(f).(x) / h[2] ^ 2
+	b[1, :] .+= left.(f, y) / (phi() + 1 / 2) / h[1]
+	b[end, :] .-= right.(f, y) / h[1] ^ 2
+	b[:, 1] .+= bottom.(f, x) / (phi() + 1 / 2) / h[2]
+	b[:, end] .-= top.(f, x) / h[2] ^ 2
 
 	b
 end
@@ -205,6 +195,12 @@ md"""
 
 """
 
+# ╔═╡ 52280146-0a68-11eb-0f38-abc19c00370a
+begin
+	n = [(2 ^ i, 2 ^ i) for i in 4:6]
+	ϵ, h = spacing.(first.(n)), error.(θ, n)
+end
+
 # ╔═╡ Cell order:
 # ╟─faaba6b8-0a08-11eb-391e-89ae75354ccf
 # ╠═028e9c9a-08ac-11eb-0f5e-01125e8da26f
@@ -225,3 +221,4 @@ md"""
 # ╠═d4660498-0a04-11eb-2f37-7310b0a79832
 # ╠═f8e7f1de-08db-11eb-3e1b-4177c637d838
 # ╟─f9b732a4-0a05-11eb-3f07-df7a037b4699
+# ╠═52280146-0a68-11eb-0f38-abc19c00370a
