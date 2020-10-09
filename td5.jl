@@ -77,13 +77,31 @@ end
 
 # ╔═╡ 9b479164-0a03-11eb-3c93-a1e929c5fd2e
 md"""
-3. Implémenter la fonction `exact` qui évalue ``θ`` à chaque point du maillage.
+3. Les fonctions `phi`, `spacing` et `mesh` du TD4 sont rappelées ci-dessous. Les utiliser pour implémenter la fonction `exact` qui évalue ``θ`` à chaque point du maillage.
 
 """
 
+# ╔═╡ b669d1c8-0a03-11eb-0d79-d7232b76bc79
+# Question 3
+function exact(f, n)
+	zeros(n...)
+end
+
+# ╔═╡ ecc8d690-08a2-11eb-04ab-275138e29f23
+# Question 3 - NE PAS MODIFIER
+phi() = 1 / √3
+
+# ╔═╡ 2a88081a-0a02-11eb-1f89-adc0728ee515
+# Question 3 - NE PAS MODIFIER
+spacing(n) = 1 / (n + phi())
+
+# ╔═╡ 90791206-0a02-11eb-1d91-19f5454706a7
+# Question 4 - NE PAS MODIFIER
+mesh(n) = [spacing(n) * (phi() + (j - 1)) for j in 1:n]
+
 # ╔═╡ 62510d90-0a01-11eb-12a7-a73a23bd3917
 md"""
-4. Les fonctions `phi`, `spacing` et `laplacian` du TD4 sont rappelées plus bas. S'en servir pour implémenter la discrétisation du laplacien en deux dimensions (voir le [produit de Kronecker](https://fr.wikipedia.org/wiki/Produit_de_Kronecker) implémenté par la fonction `kron` de `Kronecker.jl`).
+4. La fonction `laplacian` du TD4 est rappelée plus bas. S'en servir pour implémenter la discrétisation du laplacien en deux dimensions (voir le [produit de Kronecker](https://fr.wikipedia.org/wiki/Produit_de_Kronecker) implémenté par la fonction `kron` de `Kronecker.jl`).
 
 """
 
@@ -94,14 +112,6 @@ function laplacian(n::NTuple{2, Int})
 	fd = laplacian.(n)
 	kron(id[2], fd[1]) + kron(fd[2], id[1])
 end
-
-# ╔═╡ ecc8d690-08a2-11eb-04ab-275138e29f23
-# Question 4 - NE PAS MODIFIER
-phi() = 1 / √3
-
-# ╔═╡ 2a88081a-0a02-11eb-1f89-adc0728ee515
-# Question 4 - NE PAS MODIFIER
-spacing(n) = 1 / (n + phi())
 
 # ╔═╡ 8e3fb30a-0a00-11eb-3d1a-cf1d430f9524
 # Question 4 - NE PAS MODIFIER
@@ -130,7 +140,7 @@ end
 
 # ╔═╡ fc6b1422-0a01-11eb-2db4-6f24865d02d4
 md"""
-5. La fonction `mesh` du TD4 est rappelée plus bas. S'en servir ainsi que `Δ`, `left`, `bottom`, `right` et `top` pour implémenter la fonction `rhs` qui assemble le second membre.
+5. Se servir de `mesh`, `Δ`, `left`, `bottom`, `right` et `top` pour implémenter la fonction `rhs` qui assemble le second membre.
 
 """
 
@@ -203,14 +213,14 @@ md"""
 # ╠═90130a3a-08a5-11eb-0c26-ff20028c13a0
 # ╟─9b479164-0a03-11eb-3c93-a1e929c5fd2e
 # ╠═b669d1c8-0a03-11eb-0d79-d7232b76bc79
-# ╟─62510d90-0a01-11eb-12a7-a73a23bd3917
-# ╠═747cca1e-0a02-11eb-100c-73e14b996048
 # ╠═ecc8d690-08a2-11eb-04ab-275138e29f23
 # ╠═2a88081a-0a02-11eb-1f89-adc0728ee515
+# ╠═90791206-0a02-11eb-1d91-19f5454706a7
+# ╟─62510d90-0a01-11eb-12a7-a73a23bd3917
+# ╠═747cca1e-0a02-11eb-100c-73e14b996048
 # ╠═8e3fb30a-0a00-11eb-3d1a-cf1d430f9524
 # ╟─fc6b1422-0a01-11eb-2db4-6f24865d02d4
 # ╠═4ef4ed6a-08d3-11eb-3fc3-4963a265809a
-# ╠═90791206-0a02-11eb-1d91-19f5454706a7
 # ╟─39436fd2-0a04-11eb-21b0-f9be513a8477
 # ╠═d4660498-0a04-11eb-2f37-7310b0a79832
 # ╠═f8e7f1de-08db-11eb-3e1b-4177c637d838
