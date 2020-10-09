@@ -9,7 +9,7 @@ using Plots, Zygote, LsqFit, Roots
 
 # ╔═╡ e926a51e-ff0b-11ea-03e3-5369116e7cae
 md"""
-Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td3.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td3.ipynb) de ce notebook.
+Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td3.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td3/sujet.ipynb) de ce notebook.
 
 """
 

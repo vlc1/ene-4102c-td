@@ -9,7 +9,7 @@ using Zygote, Plots
 
 # ╔═╡ d61e1ea6-f924-11ea-00dc-794c93177d22
 md"""
-Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td2.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td2.ipynb) de ce notebook.
+Versions [Pluto](https://github.com/vlc1/ene-4102c-td/blob/master/td2.jl) et [Jupyter](https://vlc1.github.io/ene-4102c/td2/sujet.ipynb) de ce notebook.
 
 """
 
