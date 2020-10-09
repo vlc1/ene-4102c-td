@@ -84,7 +84,7 @@ end
 # Question 2
 begin
 	local fig
-	fig = plot(g₁, xlim = (0, 1))
+	fig = plot(g₁, xlim = (0, 1), lw = 2)
 	scatter!(fig, x -> left(θ, x))
 end
 
