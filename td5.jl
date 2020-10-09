@@ -75,12 +75,6 @@ md"""
 
 """
 
-# ╔═╡ b669d1c8-0a03-11eb-0d79-d7232b76bc79
-# Question 3
-function exact(f, n)
-	zeros(n...)
-end
-
 # ╔═╡ 62510d90-0a01-11eb-12a7-a73a23bd3917
 md"""
 4. Les fonctions `phi`, `spacing` et `laplacian` du TD4 sont rappelées plus bas. S'en servir pour implémenter la discrétisation du laplacien en deux dimensions (voir le [produit de Kronecker](https://fr.wikipedia.org/wiki/Produit_de_Kronecker) implémenté par la fonction `kron` de `Kronecker.jl`).
@@ -91,7 +85,8 @@ md"""
 # Question 4
 function laplacian(n::NTuple{2, Int})
 	id = Diagonal.(fill.(-1.0, n))
-	kron(id[2], id[1]) + kron(id[2], id[1])
+	fd = laplacian.(n)
+	kron(id[2], fd[1]) + kron(fd[2], id[1])
 end
 
 # ╔═╡ ecc8d690-08a2-11eb-04ab-275138e29f23
@@ -133,25 +128,45 @@ md"""
 
 """
 
-# ╔═╡ 4ef4ed6a-08d3-11eb-3fc3-4963a265809a
-# Question 5
-function rhs(f, n)
-	zeros(n...)
-end
-
 # ╔═╡ 90791206-0a02-11eb-1d91-19f5454706a7
 # Question 5 - NE PAS MODIFIER
 mesh(n) = [spacing(n) * (phi() + (j - 1)) for j in 1:n]
+
+# ╔═╡ b669d1c8-0a03-11eb-0d79-d7232b76bc79
+# Question 3
+function exact(f, n)
+	x, y = mesh.(n)
+
+	map(Tuple.(CartesianIndices(n))) do (i, j)
+		f(x[i], y[j])
+	end
+end
+
+# ╔═╡ 4ef4ed6a-08d3-11eb-3fc3-4963a265809a
+# Question 5
+function rhs(f, n)
+	h = spacing.(n)
+	x, y = mesh.(n)
+
+	# source
+	b = map(Tuple.(CartesianIndices(n))) do (i, j)
+		Δ(f)(x[i], y[j])
+	end
+
+	# boundary conditions
+	b[1, :] .+= left(f).(y) / (phi() + 1 / 2) / h[1]
+	b[end, :] .-= right(f).(y) / h[1] ^ 2
+	b[:, 1] .+= bottom(f).(x) / (phi() + 1 / 2) / h[2]
+	b[:, end] .-= top(f).(x) / h[2] ^ 2
+
+	b
+end
 
 # ╔═╡ 39436fd2-0a04-11eb-21b0-f9be513a8477
 md"""
 6. La fonction `numerical` définie plus bas résoudre numériquement le problème. Implémenter la fonction `error` ci-dessous qui calcule la norme de la différence entre la solution numérique et la solution analytique. Vérifier que celle-ci est nulle lorsque ``\theta`` est une fonction quadratique.
 
 """
-
-# ╔═╡ d4660498-0a04-11eb-2f37-7310b0a79832
-# Question 6
-error(f, n) = zero(Float64)
 
 # ╔═╡ f8e7f1de-08db-11eb-3e1b-4177c637d838
 # Question 6 - NE PAS MODIFIER
@@ -163,6 +178,10 @@ function numerical(f, n)
 
 	reshape(x, n...)
 end
+
+# ╔═╡ d4660498-0a04-11eb-2f37-7310b0a79832
+# Question 6
+error(f, n) = norm(numerical(f, n) - exact(f, n))
 
 # ╔═╡ f9b732a4-0a05-11eb-3f07-df7a037b4699
 md"""
