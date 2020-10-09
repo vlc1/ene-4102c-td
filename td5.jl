@@ -1,71 +1,191 @@
 ### A Pluto.jl notebook ###
-# v0.11.14
+# v0.12.3
 
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 61a36274-028f-11eb-06c9-91ed9a2056f7
-using LinearAlgebra, Kronecker
+# ╔═╡ 028e9c9a-08ac-11eb-0f5e-01125e8da26f
+begin
+	using Zygote, StaticArrays, LinearAlgebra, Kronecker, LsqFit
+	import Zygote.hessian
+end
 
-# ╔═╡ 4020216e-028f-11eb-147f-a3093365e0a5
-n = (6, 4)
+# ╔═╡ 4a689a06-08a3-11eb-3461-fd2e89b7d99f
+md"""
+# Method of Manufactured Solutions
 
-# ╔═╡ 4f6452bc-028f-11eb-3146-47029f8d6209
-c, d = -1 .* ones.(n .- 1), 2 .* ones.(n)
+On s'intéresse ici à la résolution du problème de conduction dans une plaque ``\left ( x, y \right ) \in \left [ 0, 1 \right ] ^ 2`` en régime stationnaire. On se propose donc de résoudre le problème suivant par la méthode des différences finies :
+```math
+0 = \Delta \theta \left ( x, y \right ) + \omega \left ( x, y \right )
+```
+où le Laplacien en coordonnées Cartésiennes, c'est à dire
+```math
+\Delta \theta = \left . \frac{\partial ^ 2 \theta}{\partial x ^ 2} \right \vert _ y +  \left . \frac{\partial ^ 2 \theta}{\partial y ^ 2} \right \vert _ x.
+```
 
-# ╔═╡ 26953684-0290-11eb-253f-6dc5b199298a
-A = Diagonal.(ones.(n))
+Le champs de température ``\theta`` sera soumis aux conditions aux limites suivantes :
+```math
+\left \{ \begin{aligned}
+\partial_x \theta \left ( 0, y \right ) & = g_1 \left ( y \right ), \\
+\theta \left ( 1, y \right ) & = \theta_1 \left ( y \right ),
+\end{aligned} \right . \quad \mathrm{and} \quad \left \{ \begin{aligned}
+\partial_y \theta \left ( x, 0 \right ) & = g_2 \left ( x \right ), \\
+\theta \left ( x, 1 \right ) & = \theta_2 \left ( x \right ).
+\end{aligned} \right .
+```
 
-# ╔═╡ 5e08958a-028f-11eb-2562-79e5d34c1e5a
-B = Tridiagonal.(c, d, c)
+On se propose d'employer la *Method of Manufactured Solutions* afin de vérifier l'implémentation. Étant donnée une solution ``\theta`` choisie à l'avance, l'idée est de
 
-# ╔═╡ abc7dc54-028f-11eb-0dc3-87a5587fa835
-kron(A[1], B[2]) + kron(B[1], A[2])
+* Déterminer ``\omega``, ``g_1``, ``g_2``, ``\theta_1`` et ``\theta_2`` à partir de cette solution,
+* Résoudre numériquement le problème et comparer solution numérique à la solution choisie afin d'obtenir l'ordre de la méthode.
 
-# ╔═╡ 79e6efae-028f-11eb-2e7a-7170dadf75c6
-kron(A...)
+1. Calculer  ``\omega``, ``g_1``, ``g_2``, ``\theta_1`` et ``\theta_2`` correspondant à la solution
+```math
+\theta \colon \left ( x, y \right ) \mapsto \sin \left ( \pi x \right ) \cos \left (\pi y \right ).
+```
+2. Les fonctions `Δ`, `left`, `bottom`, `right` et `top` prennent ``\theta`` comme argument et retournent respectivement ``\omega``, ``g_1``, ``g_2``, ``\theta_1`` et ``\theta_2`` automatiquement grâce à la bibliothèque d'*Algorithmic Differentiation* `Zygote.jl`. Vérifier graphiquement que ces fonctions retournent bien le résultat attendu.
 
-# ╔═╡ e7b4f602-028f-11eb-39b2-bd42f7bf0e93
-UniformScaling(4)
+"""
 
-# ╔═╡ a4d30098-048a-11eb-38e3-5bfdfa4792ac
-id = @. Diagonal(ones(n))
+# ╔═╡ fed3b534-08d0-11eb-3442-65c59de227c2
+# Question 2
+begin
+	θ(x, y) = x + y
+	ω(x, y) = zero(x) + zero(y)
+	g₁(y) = one(y)
+	g₂(x) = one(x)
+	θ₁(y) = y
+	θ₂(x) = x
+end
 
-# ╔═╡ b7e78fe6-048a-11eb-20f7-31bf91e086d3
-der = @. Tridiagonal(ones(n - 1), -2ones(n), ones(n - 1))
+# ╔═╡ 90130a3a-08a5-11eb-0c26-ff20028c13a0
+# Question 2 - NE PAS MODIFIER
+begin
+	θ(x::AbstractVector) = θ(x[1], x[2])
+	Δ(f) = (x, y) -> first(hessian(f, SVector(x, y))) + last(hessian(f, SVector(x, y)))
+	left(f) = y -> first(first(gradient(f, SVector(zero(y), y))))
+	bottom(f) = x -> last(first(gradient(f, SVector(x, zero(x)))))
+	right(f) = y -> f(one(y), y)
+	top(f) = x -> f(x, one(x))
+end
 
-# ╔═╡ ea8ab52c-048a-11eb-106e-bd3852a996d6
-#kronecker(id[1], id[2], der[3])
+# ╔═╡ 9b479164-0a03-11eb-3c93-a1e929c5fd2e
+md"""
+3. Implémenter la fonction `exact` qui évalue ``θ`` à chaque point du maillage.
 
-# ╔═╡ 110e3124-048b-11eb-2e0e-77dcd19bf0ca
-#kronecker(der[1], id[2], id[3])
+"""
 
-# ╔═╡ a75408fc-048b-11eb-2c27-7712e459f9f9
-#laplacian = kronecker(der[1], id[2], id[3]) + kronecker(id[1], der[2], id[3]) + kronecker(id[1], id[2], der[3])
+# ╔═╡ b669d1c8-0a03-11eb-0d79-d7232b76bc79
+# Question 3
+function exact(f, n)
+	zeros(n...)
+end
 
-# ╔═╡ fbe58ed8-048b-11eb-2c27-2588a9488baf
-laplacian = kronecker(der[1], id[2]) + kronecker(id[1], der[2])
+# ╔═╡ 62510d90-0a01-11eb-12a7-a73a23bd3917
+md"""
+4. Les fonctions `phi`, `spacing` et `laplacian` du TD4 sont rappelées plus bas. S'en servir pour implémenter la discrétisation du laplacien en deux dimensions (voir le [produit de Kronecker](https://fr.wikipedia.org/wiki/Produit_de_Kronecker) implémenté par la fonction `kron` de `Kronecker.jl`).
 
-# ╔═╡ 4bdeab8e-048c-11eb-2323-59e5c6f74e73
-b = rand(prod(n))
+"""
 
-# ╔═╡ a561f8e6-048c-11eb-0206-61e13bc3e06c
-x = laplacian \ b
+# ╔═╡ 747cca1e-0a02-11eb-100c-73e14b996048
+# Question 4
+function laplacian(n::NTuple{2, Int})
+	id = Diagonal.(fill.(-1.0, n))
+	kron(id[2], id[1]) + kron(id[2], id[1])
+end
+
+# ╔═╡ ecc8d690-08a2-11eb-04ab-275138e29f23
+# Question 4 - NE PAS MODIFIER
+phi() = 1 / √3
+
+# ╔═╡ 2a88081a-0a02-11eb-1f89-adc0728ee515
+# Question 4 - NE PAS MODIFIER
+spacing(n) = 1 / (n + phi())
+
+# ╔═╡ 8e3fb30a-0a00-11eb-3d1a-cf1d430f9524
+# Question 4 - NE PAS MODIFIER
+function laplacian(n)
+	h = spacing(n)
+
+	A = Tridiagonal(zeros.((n - 1, n, n - 1))...)
+
+	# gauche
+	A[1, 1] = 1 / (phi() + 1 / 2) / h ^ 2
+	A[1, 2] = -1 / (phi() + 1 / 2) / h ^ 2
+
+	# intérieur
+	for j in 2:n - 1
+		A[j, j - 1] = -1 / h ^ 2
+		A[j, j] = 2 / h ^ 2
+		A[j, j + 1] = -1 / h ^ 2
+	end
+
+	# droite
+	A[n, n - 1] = -1 / h ^ 2
+	A[n, n] = 2 / h ^ 2
+
+	A
+end
+
+# ╔═╡ fc6b1422-0a01-11eb-2db4-6f24865d02d4
+md"""
+5. La fonction `mesh` du TD4 est rappelée plus bas. S'en servir ainsi que `Δ`, `left`, `bottom`, `right` et `top` pour implémenter la fonction `rhs` qui assemble le second membre.
+
+"""
+
+# ╔═╡ 4ef4ed6a-08d3-11eb-3fc3-4963a265809a
+# Question 5
+function rhs(f, n)
+	zeros(n...)
+end
+
+# ╔═╡ 90791206-0a02-11eb-1d91-19f5454706a7
+# Question 5 - NE PAS MODIFIER
+mesh(n) = [spacing(n) * (phi() + (j - 1)) for j in 1:n]
+
+# ╔═╡ 39436fd2-0a04-11eb-21b0-f9be513a8477
+md"""
+6. La fonction `numerical` définie plus bas résoudre numériquement le problème. Implémenter la fonction `error` ci-dessous qui calcule la norme de la différence entre la solution numérique et la solution analytique. Vérifier que celle-ci est nulle lorsque ``\theta`` est une fonction quadratique.
+
+"""
+
+# ╔═╡ d4660498-0a04-11eb-2f37-7310b0a79832
+# Question 6
+error(f, n) = zero(Float64)
+
+# ╔═╡ f8e7f1de-08db-11eb-3e1b-4177c637d838
+# Question 6 - NE PAS MODIFIER
+function numerical(f, n)
+	A = laplacian(n)
+	b = reshape(rhs(f, n), prod(n))
+
+	x = A \ b
+
+	reshape(x, n...)
+end
+
+# ╔═╡ f9b732a4-0a05-11eb-3f07-df7a037b4699
+md"""
+7. Pour la solution de la question 1, vérifier le schéma est bien d'ordre deux.
+
+"""
 
 # ╔═╡ Cell order:
-# ╠═61a36274-028f-11eb-06c9-91ed9a2056f7
-# ╠═4020216e-028f-11eb-147f-a3093365e0a5
-# ╠═4f6452bc-028f-11eb-3146-47029f8d6209
-# ╠═26953684-0290-11eb-253f-6dc5b199298a
-# ╠═5e08958a-028f-11eb-2562-79e5d34c1e5a
-# ╠═abc7dc54-028f-11eb-0dc3-87a5587fa835
-# ╠═79e6efae-028f-11eb-2e7a-7170dadf75c6
-# ╠═e7b4f602-028f-11eb-39b2-bd42f7bf0e93
-# ╠═a4d30098-048a-11eb-38e3-5bfdfa4792ac
-# ╠═b7e78fe6-048a-11eb-20f7-31bf91e086d3
-# ╠═ea8ab52c-048a-11eb-106e-bd3852a996d6
-# ╠═110e3124-048b-11eb-2e0e-77dcd19bf0ca
-# ╠═a75408fc-048b-11eb-2c27-7712e459f9f9
-# ╠═fbe58ed8-048b-11eb-2c27-2588a9488baf
-# ╠═4bdeab8e-048c-11eb-2323-59e5c6f74e73
-# ╠═a561f8e6-048c-11eb-0206-61e13bc3e06c
+# ╠═028e9c9a-08ac-11eb-0f5e-01125e8da26f
+# ╟─4a689a06-08a3-11eb-3461-fd2e89b7d99f
+# ╠═fed3b534-08d0-11eb-3442-65c59de227c2
+# ╠═90130a3a-08a5-11eb-0c26-ff20028c13a0
+# ╟─9b479164-0a03-11eb-3c93-a1e929c5fd2e
+# ╠═b669d1c8-0a03-11eb-0d79-d7232b76bc79
+# ╟─62510d90-0a01-11eb-12a7-a73a23bd3917
+# ╠═747cca1e-0a02-11eb-100c-73e14b996048
+# ╠═ecc8d690-08a2-11eb-04ab-275138e29f23
+# ╠═2a88081a-0a02-11eb-1f89-adc0728ee515
+# ╠═8e3fb30a-0a00-11eb-3d1a-cf1d430f9524
+# ╟─fc6b1422-0a01-11eb-2db4-6f24865d02d4
+# ╠═4ef4ed6a-08d3-11eb-3fc3-4963a265809a
+# ╠═90791206-0a02-11eb-1d91-19f5454706a7
+# ╟─39436fd2-0a04-11eb-21b0-f9be513a8477
+# ╠═d4660498-0a04-11eb-2f37-7310b0a79832
+# ╠═f8e7f1de-08db-11eb-3e1b-4177c637d838
+# ╟─f9b732a4-0a05-11eb-3f07-df7a037b4699
