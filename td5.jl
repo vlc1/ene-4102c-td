@@ -68,11 +68,11 @@ end
 # Question 2 - NE PAS MODIFIER
 begin
 	θ(x::AbstractVector) = θ(x[1], x[2])
-	Δ(f) = (x, y) -> first(hessian(f, SVector(x, y))) + last(hessian(f, SVector(x, y)))
-	left(f) = y -> first(first(gradient(f, SVector(zero(y), y))))
-	bottom(f) = x -> last(first(gradient(f, SVector(x, zero(x)))))
-	right(f) = y -> f(one(y), y)
-	top(f) = x -> f(x, one(x))
+	Δ(f, x, y) = first(hessian(f, SVector(x, y))) + last(hessian(f, SVector(x, y)))
+	left(f, y) = first(gradient(f, zero(y), y))
+	bottom(f, x) = last(gradient(f, x, zero(x)))
+	right(f, y) = f(one(y), y)
+	top(f, x) = f(x, one(x))
 end
 
 # ╔═╡ 9b479164-0a03-11eb-3c93-a1e929c5fd2e
