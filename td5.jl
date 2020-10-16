@@ -173,9 +173,9 @@ function rhs(f, n)
 	end
 
 	# boundary conditions
-	b[1, :] .+= left.(f, y) / (phi() + 1 / 2) / h[1]
+	b[1, :] .+= left.(f, y) / (ϕ() + 1 / 2) / h[1]
 	b[end, :] .-= right.(f, y) / h[1] ^ 2
-	b[:, 1] .+= bottom.(f, x) / (phi() + 1 / 2) / h[2]
+	b[:, 1] .+= bottom.(f, x) / (ϕ() + 1 / 2) / h[2]
 	b[:, end] .-= top.(f, x) / h[2] ^ 2
 
 	b
