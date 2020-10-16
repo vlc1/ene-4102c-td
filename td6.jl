@@ -5,7 +5,7 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 028e9c9a-08ac-11eb-0f5e-01125e8da26f
-using Plots, LinearAlgebra, Kronecker
+using Plots, LinearAlgebra, Kronecker, PlutoUI
 
 # ╔═╡ faaba6b8-0a08-11eb-391e-89ae75354ccf
 md"""
@@ -19,7 +19,7 @@ md"""
 
 On reprend ici la résolution du problème de la conduction dans une plaque ``\left ( x, y \right ) \in \left [ 0, 1 \right ] ^ 2``, à ceci près que cette fois-ci le régime est supposé instationnaire. On se propose donc de résoudre numériquement le problème suivant :
 ```math
-\rho c_p \left . \frac{\partial \theta}{\partial t} \right \vert _ {x, y} = \lambda \Delta \theta \left ( x, y \right ) + \omega \left ( x, y \right )
+\rho c_p \left . \frac{\partial \theta}{\partial t} \right \vert _ {x, y} = \lambda \Delta \theta \left ( t, x, y \right ) + \omega \left ( t, x, y \right )
 ```
 où on écrit encore une fois le Laplacien en coordonnées Cartésiennes, c'est à dire
 ```math
@@ -116,8 +116,36 @@ function rhs(ω, g₁, g₂, θ₁, θ₂, n, t)
 	reshape(b, prod(n))
 end
 
+# ╔═╡ 34048188-0fb2-11eb-3c97-795e8bc6ea22
+# NE PAS MODIFIER
+function initial(θ₀, n)
+	x, y = mesh.(n)
+
+	θ = map(Tuple.(CartesianIndices(n))) do (i, j)
+		θ₀(x[i], y[j])
+	end
+
+	reshape(θ, prod(n))
+end
+
+# ╔═╡ e58f6d58-0fe6-11eb-1221-95bd801b1623
+# MODIFIER
+function integrate(ω, g₁, g₂, θ₁, θ₂, z, t, τ, n, m)
+	T, Z = [t], [z]
+
+	for i in 1:m
+		z = z
+		t += τ
+
+		push!(Z, z)
+		push!(T, t)
+	end
+
+	T, Z
+end
+
 # ╔═╡ 949fe75a-0f8f-11eb-0371-e3f6cdc9856c
-# À MODIFIER
+# MODIFIER
 begin
 	ω(t, x, y) = zero(x)
 	g₁(t, y) = zero(y)
@@ -137,4 +165,6 @@ end
 # ╠═8e3fb30a-0a00-11eb-3d1a-cf1d430f9524
 # ╠═747cca1e-0a02-11eb-100c-73e14b996048
 # ╠═4ef4ed6a-08d3-11eb-3fc3-4963a265809a
+# ╠═34048188-0fb2-11eb-3c97-795e8bc6ea22
+# ╠═e58f6d58-0fe6-11eb-1221-95bd801b1623
 # ╠═949fe75a-0f8f-11eb-0371-e3f6cdc9856c
