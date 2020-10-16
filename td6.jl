@@ -108,12 +108,12 @@ function rhs(ω, g₁, g₂, θ₁, θ₂, n, t)
 	end
 
 	# boundary conditions
-	b[1, :] .+= g₁.(t, y) / (ϕ() + 1 / 2) / h[1]
-	b[end, :] .-= θ₁.(t, y) / h[1] ^ 2
-	b[:, 1] .+= g₂.(t, x) / (ϕ() + 1 / 2) / h[2]
-	b[:, end] .-= θ₂.(t, x) / h[2] ^ 2
+	b[1, :] .-= g₁.(t, y) / (ϕ() + 1 / 2) / h[1]
+	b[end, :] .+= θ₁.(t, y) / h[1] ^ 2
+	b[:, 1] .-= g₂.(t, x) / (ϕ() + 1 / 2) / h[2]
+	b[:, end] .+= θ₂.(t, x) / h[2] ^ 2
 
-	b
+	reshape(b, prod(n))
 end
 
 # ╔═╡ 949fe75a-0f8f-11eb-0371-e3f6cdc9856c
