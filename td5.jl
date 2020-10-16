@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.12.3
+# v0.12.4
 
 using Markdown
 using InteractiveUtils
@@ -85,7 +85,7 @@ end
 
 # ╔═╡ 9b479164-0a03-11eb-3c93-a1e929c5fd2e
 md"""
-3. Les fonctions `phi`, `spacing` et `mesh` du TD4 sont rappelées ci-dessous. Les utiliser pour implémenter la fonction `exact` qui évalue ``θ`` à chaque point du maillage.
+3. Les fonctions `ϕ`, `spacing` et `mesh` du TD4 sont rappelées ci-dessous. Les utiliser pour implémenter la fonction `exact` qui évalue ``θ`` à chaque point du maillage.
 
 """
 
@@ -97,15 +97,15 @@ end
 
 # ╔═╡ ecc8d690-08a2-11eb-04ab-275138e29f23
 # Question 3 - NE PAS MODIFIER
-phi() = 1 / √3
+ϕ() = 1 / √3
 
 # ╔═╡ 2a88081a-0a02-11eb-1f89-adc0728ee515
 # Question 3 - NE PAS MODIFIER
-spacing(n) = 1 / (n + phi())
+spacing(n) = 1 / (n + ϕ())
 
 # ╔═╡ 90791206-0a02-11eb-1d91-19f5454706a7
 # Question 4 - NE PAS MODIFIER
-mesh(n) = [spacing(n) * (phi() + (j - 1)) for j in 1:n]
+mesh(n) = [spacing(n) * (ϕ() + (j - 1)) for j in 1:n]
 
 # ╔═╡ 62510d90-0a01-11eb-12a7-a73a23bd3917
 md"""
@@ -128,8 +128,8 @@ function laplacian(n)
 	A = Tridiagonal(zeros.((n - 1, n, n - 1))...)
 
 	# gauche
-	A[1, 1] = 1 / (phi() + 1 / 2) / h ^ 2
-	A[1, 2] = -1 / (phi() + 1 / 2) / h ^ 2
+	A[1, 1] = 1 / (ϕ() + 1 / 2) / h ^ 2
+	A[1, 2] = -1 / (ϕ() + 1 / 2) / h ^ 2
 
 	# intérieur
 	for j in 2:n - 1
