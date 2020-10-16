@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.11.14
+# v0.12.4
 
 using Markdown
 using InteractiveUtils
@@ -243,13 +243,47 @@ y \left ( 1 \right ) & = y_1.
 """
 
 # ╔═╡ 8bd6afce-04b5-11eb-39a4-817b45ff8848
-phi() = 1 / √3
+ϕ() = 1 / √3
 
 # ╔═╡ 65969a00-0419-11eb-3bd9-41931e3e837a
 spacing(n) = 1 / (n + phi())
 
+# ╔═╡ a0e291dc-0f8a-11eb-17b5-9510ab005050
+if abs(spacing(4) - 0.218467004092792) < √eps(1.0)
+	md"""
+	!!! terminology "Code valide"
+
+	Votre implémentation de `spacing` fonctionne !
+
+	"""
+else
+	md"""
+	!!! danger "Code invalide"
+
+	Votre implémentation de `spacing` ne fonctionne pas.
+
+	"""
+end
+
 # ╔═╡ a8cfd4a4-0418-11eb-3d7d-257307b0d2bd
 mesh(n) = [spacing(n) * (phi() + (j - 1)) for j in 1:n]
+
+# ╔═╡ c4a90808-0f8a-11eb-3441-3f18c493686a
+if norm(mesh(2) - spacing(2) .* (ϕ() .+ (0:1))) < √eps(1.0)
+	md"""
+	!!! terminology "Code valide"
+
+	Votre implémentation de `mesh` fonctionne !
+
+	"""
+else
+	md"""
+	!!! danger "Code invalide"
+
+	Votre implémentation de `mesh` ne fonctionne pas.
+
+	"""
+end
 
 # ╔═╡ 103e3098-041b-11eb-2a89-855f41985558
 md"""
@@ -361,7 +395,9 @@ md"""
 # ╟─e304b5b2-0324-11eb-0b67-b5b1c5a3ce36
 # ╠═8bd6afce-04b5-11eb-39a4-817b45ff8848
 # ╠═65969a00-0419-11eb-3bd9-41931e3e837a
+# ╟─a0e291dc-0f8a-11eb-17b5-9510ab005050
 # ╠═a8cfd4a4-0418-11eb-3d7d-257307b0d2bd
+# ╟─c4a90808-0f8a-11eb-3441-3f18c493686a
 # ╟─103e3098-041b-11eb-2a89-855f41985558
 # ╠═a2321e98-041d-11eb-1a10-297553e4aee7
 # ╠═2603c732-03bf-11eb-3c01-a3b6d7e04ef6
