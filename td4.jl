@@ -246,7 +246,7 @@ y \left ( 1 \right ) & = y_1.
 ϕ() = 1 / √3
 
 # ╔═╡ 65969a00-0419-11eb-3bd9-41931e3e837a
-spacing(n) = 1 / (n + phi())
+spacing(n) = 1 / (n + ϕ())
 
 # ╔═╡ a0e291dc-0f8a-11eb-17b5-9510ab005050
 if abs(spacing(4) - 0.218467004092792) < √eps(1.0)
@@ -266,7 +266,7 @@ else
 end
 
 # ╔═╡ a8cfd4a4-0418-11eb-3d7d-257307b0d2bd
-mesh(n) = [spacing(n) * (phi() + (j - 1)) for j in 1:n]
+mesh(n) = [spacing(n) * (ϕ() + (j - 1)) for j in 1:n]
 
 # ╔═╡ c4a90808-0f8a-11eb-3441-3f18c493686a
 if norm(mesh(2) - spacing(2) .* (ϕ() .+ (0:1))) < √eps(1.0)
@@ -298,8 +298,8 @@ function laplacian(n)
 	A = Tridiagonal(zeros.((n - 1, n, n - 1))...)
 
 	# gauche
-	A[1, 1] = 1 / (phi() + 1 / 2) / h ^ 2
-	A[1, 2] = -1 / (phi() + 1 / 2) / h ^ 2
+	A[1, 1] = 1 / (ϕ() + 1 / 2) / h ^ 2
+	A[1, 2] = -1 / (ϕ() + 1 / 2) / h ^ 2
 
 	# intérieur
 	for j in 2:n - 1
@@ -324,7 +324,7 @@ function rhs(n, f, g₀, y₁)
 	B = f.(X)
 
 	# conditions aux limites
-	B[begin] -= g₀ / (phi() + 1 / 2) / h
+	B[begin] -= g₀ / (ϕ() + 1 / 2) / h
 	B[end] += y₁ / h ^ 2
 
 	B
