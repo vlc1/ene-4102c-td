@@ -4,6 +4,15 @@
 using Markdown
 using InteractiveUtils
 
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : missing
+        el
+    end
+end
+
 # ╔═╡ 028e9c9a-08ac-11eb-0f5e-01125e8da26f
 using Plots, LinearAlgebra, Kronecker, PlutoUI
 
@@ -96,33 +105,50 @@ function laplacian(n::NTuple{2, Int})
 	kron(id[2], fd[1]) + kron(fd[2], id[1])
 end
 
+# ╔═╡ 264df660-0fe8-11eb-0466-8daf53d0c2e1
+# NE PAS MODIFIER
+begin
+	struct System{I,S,L,R,B,T}
+		initial::I
+		source::S
+		left::L
+		right::R
+		bottom::B
+		top::T
+	end
+
+	for field in fieldnames(System)
+		eval(:($field(prob::System) = prob.$field))
+	end
+end
+
 # ╔═╡ 4ef4ed6a-08d3-11eb-3fc3-4963a265809a
 # NE PAS MODIFIER
-function rhs(ω, g₁, g₂, θ₁, θ₂, n, t)
+function rhs(sys, n, t)
 	h = spacing.(n)
 	x, y = mesh.(n)
 
 	# source
 	b = map(Tuple.(CartesianIndices(n))) do (i, j)
-		ω(t, x[i], y[j])
+		source(sys)(t, x[i], y[j])
 	end
 
 	# boundary conditions
-	b[1, :] .-= g₁.(t, y) / (ϕ() + 1 / 2) / h[1]
-	b[end, :] .+= θ₁.(t, y) / h[1] ^ 2
-	b[:, 1] .-= g₂.(t, x) / (ϕ() + 1 / 2) / h[2]
-	b[:, end] .+= θ₂.(t, x) / h[2] ^ 2
+	b[1, :] .-= left(sys).(t, y) / (ϕ() + 1 / 2) / h[1]
+	b[end, :] .+= right(sys).(t, y) / h[1] ^ 2
+	b[:, 1] .-= bottom(sys).(t, x) / (ϕ() + 1 / 2) / h[2]
+	b[:, end] .+= top(sys).(t, x) / h[2] ^ 2
 
 	reshape(b, prod(n))
 end
 
 # ╔═╡ 34048188-0fb2-11eb-3c97-795e8bc6ea22
 # NE PAS MODIFIER
-function initial(θ₀, n)
+function initial(sys, n)
 	x, y = mesh.(n)
 
 	θ = map(Tuple.(CartesianIndices(n))) do (i, j)
-		θ₀(x[i], y[j])
+		initial(sys)(x[i], y[j])
 	end
 
 	reshape(θ, prod(n))
@@ -130,11 +156,18 @@ end
 
 # ╔═╡ e58f6d58-0fe6-11eb-1221-95bd801b1623
 # MODIFIER
-function integrate(ω, g₁, g₂, θ₁, θ₂, z, t, τ, n, m)
+function integrate(sys, τ, m, n)
+	t, z = zero(τ), initial(sys, n)
+
 	T, Z = [t], [z]
 
+	A = laplacian(n)
+	I = UniformScaling(1.0)
+
 	for i in 1:m
-		z = z
+		b = rhs(sys, n, t + τ)
+
+		z = (I - τ * A) \ (z + τ * b)
 		t += τ
 
 		push!(Z, z)
@@ -147,12 +180,31 @@ end
 # ╔═╡ 949fe75a-0f8f-11eb-0371-e3f6cdc9856c
 # MODIFIER
 begin
+	θ₀(x, y) = zero(x * y)
 	ω(t, x, y) = zero(x)
-	g₁(t, y) = zero(y)
-	g₂(t, x) = zero(x)
-	θ₁(t, y) = zero(y)
-	θ₂(t, x) = zero(x)
-	θ₀(x, y) = zero(x)
+	g₁(t, y) = y
+	g₂(t, x) = x
+	θ₁(t, y) = y
+	θ₂(t, x) = x
+end
+
+# ╔═╡ 49543c2a-0feb-11eb-261f-8baf0b90c4ff
+begin
+	τ, m, n = 0.001, 10, (16, 16)
+	sys = System(θ₀, ω, g₁, θ₁, g₂, θ₂)
+	T, Z = integrate(sys, τ, m, n)
+end
+
+# ╔═╡ 82796ac2-0ff1-11eb-13ea-af8c0badf657
+axes(Z)
+
+# ╔═╡ 62aadebc-0ff1-11eb-3c2a-838b2c3a234b
+@bind step Slider(axes(Z, 1))
+
+# ╔═╡ 8ff89a58-0ff1-11eb-1d25-89abb1d7af84
+begin
+	x, y = mesh.(n)
+	heatmap(x, y, reshape(Z[step], n...))
 end
 
 # ╔═╡ Cell order:
@@ -164,7 +216,12 @@ end
 # ╠═90791206-0a02-11eb-1d91-19f5454706a7
 # ╠═8e3fb30a-0a00-11eb-3d1a-cf1d430f9524
 # ╠═747cca1e-0a02-11eb-100c-73e14b996048
+# ╠═264df660-0fe8-11eb-0466-8daf53d0c2e1
 # ╠═4ef4ed6a-08d3-11eb-3fc3-4963a265809a
 # ╠═34048188-0fb2-11eb-3c97-795e8bc6ea22
 # ╠═e58f6d58-0fe6-11eb-1221-95bd801b1623
 # ╠═949fe75a-0f8f-11eb-0371-e3f6cdc9856c
+# ╠═49543c2a-0feb-11eb-261f-8baf0b90c4ff
+# ╠═82796ac2-0ff1-11eb-13ea-af8c0badf657
+# ╠═62aadebc-0ff1-11eb-3c2a-838b2c3a234b
+# ╠═8ff89a58-0ff1-11eb-1d25-89abb1d7af84
